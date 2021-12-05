@@ -23,7 +23,7 @@ def auto_decrypt(initial_message):
     for item in initial_message.split(" ")[:9]:  # Should have just used regex, but not included in the exercises so didn't want to lose out on marks
         clean_word = [char for char in item if char.isalpha()]  # Should check if each char is in the alphabet, and if so add it
         clean_word = "".join(clean_word)
-        clean_words.append(clean_word)
+        clean_words.append(clean_word.lower())  # HAVE TO ADD .lower() BECAUSE words.txt file is all lower case!!
     shortened_message = " ".join(clean_words)
 
     with open("words.txt", "r") as f:  # try load words.txt

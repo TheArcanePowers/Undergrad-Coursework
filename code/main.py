@@ -6,9 +6,11 @@ import metrics  # PART 2 import
 
 message = None
 
+print()  # newline for aesthetics
+
 # PART 3.1
 while True:
-    message_mode = (input("Message mode - File or Manual entry: ").upper())[0]
+    message_mode = (input("Message mode - (F)ile or (M)anual entry: ").upper())[0]
     if message_mode == "F":
         while True:
             file_loc = input("Filename or filepath: ")
@@ -32,8 +34,8 @@ while True:
     else:
         print("Invalid input. Please enter E for Encrypt or D for Decrypt")
 
-while True and cipher_mode != "A":
-    rotation_mode = (input("Rotation mode - (M)Numerical mode or (R)Random mode: ").upper())[0]
+while True and cipher_mode != "A":  # ciper_mode check due to part 4
+    rotation_mode = (input("Rotation mode - (M)Numerical mode or (R)andom mode: ").upper())[0]
     if rotation_mode == "M":
         try:
             rotation = int(input("Interger value for how many places cipher should shift: "))
@@ -49,26 +51,39 @@ while True and cipher_mode != "A":
 if message is None:  # check if message has already been gotten from file
     message = str(input("Message to be encrypted/decrypted: ")).strip().upper()  # .upper() to comply with PART 1.4
 
+# print("\n")  # makes output look pretty :)
+
 # calling PART 1.4
 if cipher_mode == "E":
-    print(functions.encrypt(message, rotation))
+    print(f"\nEncrypted Message: {functions.encrypt(message, rotation)}")
 if cipher_mode == "D":
     decrypted_message = functions.decrypt(message, rotation)  # doing this so don't call same function twice. probably quicker, just felt right
-    print(decrypted_message)
+    print(f"\nDecrypted Message: {decrypted_message}")
+
 # calling PART 4
 if cipher_mode == "A":
     print("Beginning Auto-Decryption...")
     autodecrypt_result = automated.auto_decrypt(message)
     if autodecrypt_result is not False:
         print(f"Full decrypted message: {autodecrypt_result}")
+        m = metrics.Metrics(autodecrypt_result)
     else:
         print("Auto-Decrypt failed!")
+        quit()  # peacefully quit. this prevents part 2 from executing
+# initializing PART 2
+elif cipher_mode == "D":
+    m = metrics.Metrics(decrypted_message)
+elif cipher_mode == "E":
+    m = metrics.Metrics(message)
 
-# calling PART 2
-if autodecrypt_result is not False:  # Accounting for part 4
-    if cipher_mode == "D":
-        m = metrics.Metrics(decrypted_message)
-    else:
-        m = metrics.Metrics(message)
-    m.export_metrics()
-    m.print_sorted_words()
+# Printing Part 2
+m.export_metrics()
+list_of_words, word_dictionary = m.sort_words()
+print("\nMetrics:")
+print(f"List of up to five most frequent unique words: {list_of_words}")
+print("Most common words in descending order:")
+for i in word_dictionary:
+    print(f"{i}: {word_dictionary[i]}")  # doing it individually like this because we were asked to in Part 2.4
+
+#!EXTRA#
+m.produce_barchart()
