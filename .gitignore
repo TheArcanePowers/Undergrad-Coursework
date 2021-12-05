@@ -115,4 +115,4 @@ dmypy.json
 
 # program specific (CUSTOM)
 metrics.txt
-.vs
+.vs/
