@@ -1,6 +1,12 @@
+"""This module just contains the Metrics class.
+
+FUNCTIONS:
+    (initial_message)
+
+"""
+
 from collections import OrderedDict  # for part 2.4. Python 3.7 has ordered dictionaries, but this is considered better by industry plus increases compatibility
-# #!EXTRA# Following imports are for bar chart
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # #!EXTRA# for bar chart
 
 
 # PART 2
@@ -16,7 +22,8 @@ class Metrics():
 
     Methods
         export_metrics(filepath="" (optional)): Writes metrics to metrics.txt.
-        print_sorted_words(): Print (up to) the five most frequently occuring words.
+        sort_words(): Return most frequently occuring words, and a dict containing their frequencies.
+        produce_barchart(): Generates a bar chart of most frequently occuring messages. Calls sort_word() if not already called.
     """
 
     def __init__(self, raw_message):
@@ -50,9 +57,9 @@ class Metrics():
                     temp_dictionary[char] = 1
         self.common_char = max(temp_dictionary, key=temp_dictionary.get)
 
-    def print_metrics(self):  # Debug
-        """Write metrics to console."""
-        print(self.total_words, self.num_words, self.min_word_len, self.max_word_len, self.common_char)
+    # def print_metrics(self):  # Debug, purposefully kept in to help code re-usability
+    #     """Write metrics to console."""
+    #     print(self.total_words, self.num_words, self.min_word_len, self.max_word_len, self.common_char)
 
     # Part 2.2
     def export_metrics(self, filepath=""):
@@ -70,26 +77,25 @@ class Metrics():
 
     # PART 2.3
     def sort_words(self):
-        """Print (up to) the five most frequently occuring words."""
-        self.sort_words_been_called = True  # #!EXTRA#  Like this I know if it has been called, if not I call it to gen self.word_dictionary
-        if len(self.unique_words) <= 5:
-            print(self.unique_words)
-            return
-        else:
-            temp_dictionary = {}
-            for word in self.clean_words:
-                if word in temp_dictionary:
-                    temp_dictionary[word] += 1
-                else:
-                    temp_dictionary[word] = 1
-        n = 1
+        """Return (up to) the five most frequently occuring words, and a dict containing their frequencies."""
+        self.sort_words_been_called = True  # #!EXTRA#  Like this I know if the function has been called, if not I call it to gen self.word_dictionary
+        temp_dictionary = {}
+        for word in self.clean_words:
+            if word in temp_dictionary:
+                temp_dictionary[word] += 1
+            else:
+                temp_dictionary[word] = 1
+        # Complicated code to remove words with the same frequency
+        n = 1  # starting with frequency of one
         while len(temp_dictionary) > 5:
-            temp_dictionary = {char: freq for char, freq in temp_dictionary.items() if freq != n}  # Iterates over whole dictionary, recreating it except for values with a key equal to n. n starts at 1, and increments each time until list is less than 6
+            temp_dictionary = {char: freq for char, freq in temp_dictionary.items() if freq != n}
+            # Dictionary comprehension, recreating it except for values with a key equal to n
+            # n starts at 1, and increments each time until list is less than 6
             n += 1
         list_of_words = list(temp_dictionary.keys())  # told to return a list. without list() would return dict_keys object which is close but not quite a list
         # PART 2.4
         ordered_dict = OrderedDict(sorted(temp_dictionary.items(), key=lambda x: x[1], reverse=True))  # https://docs.python.org/3/howto/sorting.html
-        self.word_dictionary = {}
+        self.word_dictionary = {}  # Made self. because referenced in produce_barchart
         for keyvalue in ordered_dict.items():
             self.word_dictionary[str(keyvalue[0])] = keyvalue[1]
         return list_of_words, self.word_dictionary
@@ -100,19 +106,19 @@ class Metrics():
         if self.sort_words_been_called is False:
             self.sort_words()
             self.produce_barchart()
-        else:
+        else:  # Referenced from courework
             plt.xlabel("Most frequently occuring words")
             plt.ylabel("Frequency appearing in message")
-            plt.bar(range(len(self.word_dictionary)), self.word_dictionary.values(), tick_label=list(self.word_dictionary.keys()))
-            plt.show()
+            plt.bar(range(len(self.word_dictionary)), self.word_dictionary.values(), tick_label=list(self.word_dictionary.keys()), color=["red", "yellow", "green", "blue", "purple"])
             plt.savefig('bar_chart.pdf')
+            plt.show()
 
 
 # Debug
-# raw_message = "Here you see a long message for you to encrypt, it may take you a while"
+# raw_message = "Here"
 # m = Metrics(raw_message)
-# #m.print_metrics()
+# m.print_metrics()
 # list_of_words, word_dictionary = m.sort_words()
-# # print(list_of_words)
-# # print(word_dictionary)
+# print(list_of_words)
+# print(word_dictionary)
 # m.produce_barchart()

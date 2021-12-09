@@ -16,7 +16,7 @@ while True:
             file_loc = input("Filename or filepath: ")
             try:
                 with open(file_loc, "r") as f:
-                    message = f.read().replace("\n", " ")  # newlines into words
+                    message = f.read().replace("\n", " ").upper()  # newlines into words, .upper() to comply with Part 1.4
                 break  # as open file will not have thrown an exception
             except FileNotFoundError:
                 pass  # do nothing, and thus let while True continue
@@ -44,11 +44,12 @@ while True and cipher_mode != "A":  # ciper_mode check due to part 4
         break
     elif rotation_mode == "R":
         rotation = random.randint(0, 26)  # Assumed max to be 26
+        print(f"Random rotation chosen to be: {rotation}")
         break
     else:
         print("Invalid input. Please enter M for Numerical mode or R for Random mode")
 
-if message is None:  # check if message has already been gotten from file
+if message is None:  # check if message has already been gotten from Part 3
     message = str(input("Message to be encrypted/decrypted: ")).strip().upper()  # .upper() to comply with PART 1.4
 
 # print("\n")  # makes output look pretty :)
@@ -64,7 +65,7 @@ if cipher_mode == "D":
 if cipher_mode == "A":
     print("Beginning Auto-Decryption...")
     autodecrypt_result = automated.auto_decrypt(message)
-    if autodecrypt_result is not False:
+    if autodecrypt_result is not False:  # False returned on failure of auto_decrypt
         print(f"Full decrypted message: {autodecrypt_result}")
         m = metrics.Metrics(autodecrypt_result)
     else:
@@ -85,5 +86,5 @@ print("Most common words in descending order:")
 for i in word_dictionary:
     print(f"{i}: {word_dictionary[i]}")  # doing it individually like this because we were asked to in Part 2.4
 
-#!EXTRA#
+# #!EXTRA#
 m.produce_barchart()

@@ -1,4 +1,6 @@
-"""This module stores all the miscelaneous functions used by main.py.
+"""This module stores all the encryption and decryption functions used by main.py.
+
+#!EXTRA# Because this a Caesar cipher class containing encryption and decryption methods.
 
 FUNCTIONS:
 encrypt(message, rotation),
@@ -23,11 +25,6 @@ def encrypt(message, rotation):
     """
     encrypted_message = ""
     for char in message:
-        try:
-            new = ord(char) + rotation
-        except TypeError:
-            raise ValueError("Rotation suppied must be an integer!")  # This is superfluous due to part 1.2 & part 1.3, but since functions can be imported and called it's important to have error catching in them
-
         # Determine if char is upper or lower case
         letter = False
         if 65 <= ord(char) <= 90:
@@ -38,6 +35,16 @@ def encrypt(message, rotation):
             letter = True
 
         if letter is True:
+            # Normalize rotation (REF:https://stackoverflow.com/questions/6685057/modular-addition-in-python)
+            if rotation < 0:
+                rotation = (26 - abs(rotation)) % 26
+                print(rotation)
+            # Add rotation to old character
+            try:
+                new = ord(char) + rotation
+            except TypeError:
+                raise ValueError("Rotation suppied must be an integer!")  # This is superfluous due to part 1.2 & part 1.3, but since functions can be imported and called it's important to have error catching in them
+
             # While loop to account for rotation being more than 26, requiring to be adjusted multiple times
             while (upper is True and new > 90) or (upper is False and new > 122):
                 new -= 26
@@ -64,11 +71,6 @@ def decrypt(message, rotation):
     """
     decrypted_message = ""
     for char in message:
-        try:
-            new = ord(char) - rotation
-        except TypeError:
-            raise ValueError("Rotation suppied must be an integer!")  # This is superfluous due to part 1.2 & part 1.3, but since functions can be imported and called it's important to have error catching in them
-
         # Determine if char is a letter, and if upper or lower case
         letter = False
         if 65 <= ord(char) <= 90:
@@ -77,6 +79,16 @@ def decrypt(message, rotation):
             upper, letter = False, True
 
         if letter is True:
+            # Normalize rotation (REF:https://stackoverflow.com/questions/6685057/modular-addition-in-python)
+            if rotation < 0:
+                rotation = (26 - abs(rotation)) % 26
+                print(rotation)
+            # Add rotation to old character
+            try:
+                new = ord(char) - rotation
+            except TypeError:
+                raise ValueError("Rotation suppied must be an integer!")  # This is superfluous due to part 1.2 & part 1.3, but since functions can be imported and called it's important to have error catching in them
+
             # While loop to account for rotation being more than 26, requiring to be adjusted multiple times
             while (upper is True and new < 65) or (upper is False and new < 97):
                 new += 26
@@ -86,3 +98,6 @@ def decrypt(message, rotation):
         else:
             decrypted_message += char  # no change if not a letter
     return decrypted_message
+
+# Debug
+# print(encrypt("aaab", -30))
