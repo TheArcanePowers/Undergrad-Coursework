@@ -1,8 +1,8 @@
 """Main program running all parts."""
 import random
-import automated  # PART 4 import
-import functions  # PART 1 import
-import metrics  # PART 2 import
+import automated  # PART 4 module import
+import functions  # PART 1 module import
+import metrics  # PART 2 module import
 
 message = None
 

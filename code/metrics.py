@@ -93,7 +93,7 @@ class Metrics():
             # n starts at 1, and increments each time until list is less than 6
             n += 1
         list_of_words = list(temp_dictionary.keys())  # told to return a list. without list() would return dict_keys object which is close but not quite a list
-        # PART 2.4
+    # PART 2.4
         ordered_dict = OrderedDict(sorted(temp_dictionary.items(), key=lambda x: x[1], reverse=True))  # https://docs.python.org/3/howto/sorting.html
         self.word_dictionary = {}  # Made self. because referenced in produce_barchart
         for keyvalue in ordered_dict.items():
