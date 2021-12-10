@@ -1,7 +1,7 @@
-"""This module just contains the Metrics class.
+"""This module contains the Metrics class for Part 2.
 
-FUNCTIONS:
-    (initial_message)
+CLASSES:
+    Metrics()
 
 """
 
@@ -103,22 +103,12 @@ class Metrics():
     # #!EXTRA# Produce a bar chart to show metrics
     def produce_barchart(self):
         """Generate a MatPlotLib bar chart of most frequently occuring messages."""
-        if self.sort_words_been_called is False:
+        if self.sort_words_been_called is False:  # Function relies on self.word_dictionary. If sort_words hasn't been called, it calls it and then recalls this function.
             self.sort_words()
             self.produce_barchart()
-        else:  # Referenced from courework
+        else:  # Referenced from coursework
             plt.xlabel("Most frequently occuring words")
             plt.ylabel("Frequency appearing in message")
             plt.bar(range(len(self.word_dictionary)), self.word_dictionary.values(), tick_label=list(self.word_dictionary.keys()), color=["red", "yellow", "green", "blue", "purple"])
             plt.savefig('bar_chart.pdf')
-            plt.show()
-
-
-# Debug
-# raw_message = "Here"
-# m = Metrics(raw_message)
-# m.print_metrics()
-# list_of_words, word_dictionary = m.sort_words()
-# print(list_of_words)
-# print(word_dictionary)
-# m.produce_barchart()
+            plt.show()  # hangs terminal, but would require multiprocessing so job for another day.

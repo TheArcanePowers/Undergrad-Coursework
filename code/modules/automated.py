@@ -1,14 +1,15 @@
-"""This module just contains the automatic decryptor function.
+"""This module contains the automatic decryptor function for Part 3.
 
 FUNCTIONS:
-auto_decrypt(initial_message)
+    auto_decrypt(initial_message)
 
 """
 
 
-import functions
+import modules.functions as functions
 
 
+# Part 3
 def auto_decrypt(initial_message):
     """Iterate over all possible rotations, offering potential decryption to user.
 
@@ -32,14 +33,14 @@ def auto_decrypt(initial_message):
             words = f.readlines()
             words = set([word.rstrip("\n") for word in words])  # getting rid of \n
     except FileNotFoundError:
-        raise ("words.txt file missing in parent directory!")  # raises custom error
+        raise ("Fatal Error: words.txt file missing in parent directory!")  # raises custom error
 
     for rotation in range(1, 27):
         if set(functions.decrypt(shortened_message, rotation).split(" ")) & words:  # & is quickest way to compare two sets
             print(f"Potential decryption found: {functions.decrypt(shortened_message, rotation)}")
-            user_input = input("Is this an accurate description? (Y/yes/N/no): ").upper()[0]
+            user_input = input("Is this an accurate decryption? (Y/yes/N/no): ").upper()[0]
             if user_input == "Y":
                 return functions.decrypt(initial_message, rotation)  # note initial_message is decrypted, not the shortened_message
             else:
-                print("Continuing with decryption...")
-    return False  # User denied all or program couldn't find any possible decryptions
+                print("Continuing with decryption...\n")
+    return False  # User rejected all or program couldn't find any possible decryptions

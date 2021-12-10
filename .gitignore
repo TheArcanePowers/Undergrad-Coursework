@@ -115,4 +115,10 @@ dmypy.json
 
 # program specific (CUSTOM)
 metrics.txt
+.vs/*
+/.vs
+.vs
 .vs/
+bar_chart.pdf
+test_encrypt.txt
+test_decrypt.txt

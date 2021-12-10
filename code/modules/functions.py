@@ -1,6 +1,6 @@
-"""This module stores all the encryption and decryption functions used by main.py.
+"""This module stores all the encryption and decryption functions used by main.py for Part 1.
 
-#!EXTRA# Because this a Caesar cipher class containing encryption and decryption methods.
+#!EXTRA# Counts towards Part 5 Because this a Caesar cipher module containing encryption and decryption methods.
 
 FUNCTIONS:
 encrypt(message, rotation),
@@ -26,7 +26,7 @@ def encrypt(message, rotation):
     encrypted_message = ""
     for char in message:
         # Determine if char is upper or lower case
-        letter = False
+        letter = False  # set default for it not to be a letter. Could also be else: letter = False but it doesn't rly matter
         if 65 <= ord(char) <= 90:
             upper = True
             letter = True
@@ -98,6 +98,3 @@ def decrypt(message, rotation):
         else:
             decrypted_message += char  # no change if not a letter
     return decrypted_message
-
-# Debug
-# print(encrypt("aaab", -30))
