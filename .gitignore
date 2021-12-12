@@ -122,3 +122,4 @@ metrics.txt
 bar_chart.pdf
 test_encrypt.txt
 test_decrypt.txt
+*.zip
