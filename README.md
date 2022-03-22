@@ -7,7 +7,7 @@ https://ndlib.readthedocs.io/en/latest/installing.html
 
 
 # Requirements
-six
+six, matplotlib
 
 # RoadMap
 1. Get the data
@@ -19,6 +19,17 @@ six
 	Vaccines, making people immune for a short time. Initial vaccine percentage
 	Social distancing
 	SIR+ (so people go from Removed (recovered) to susceptible again), 
+
+    Opinion dynamics - 
 	
 3. Output
 	Webpage? Video?
+
+4. Compare with actual data!
+    We compare the different
+
+
+# RoadMap
+1. Simple SIR Model, comparing bristol's infections with an SIR model.
+2. Make that work for all of South England!
+3. Introduce vaccination model, for each place
