@@ -21,7 +21,7 @@ model.set_initial_status(config)
 
 
 # Simulation
-iterations = model.iteration_bunch(200)
+iterations = model.iteration_bunch(600)
 trends = model.build_trends(iterations)
 
 from bokeh.io import output_notebook, show

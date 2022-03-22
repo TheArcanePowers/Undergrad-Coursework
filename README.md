@@ -7,6 +7,18 @@ https://ndlib.readthedocs.io/en/latest/installing.html
 
 
 # Requirements
-https://ndlib.readthedocs.io/en/latest/installing.html#requirements
+six
 
-What do we want to do
+# RoadMap
+1. Get the data
+	Webscraper - you put a specific country and it gets whatever data from that country
+		APIs for population, age, etc.
+		
+2. From that data, run a variety of simulations
+	SIR
+	Vaccines, making people immune for a short time. Initial vaccine percentage
+	Social distancing
+	SIR+ (so people go from Removed (recovered) to susceptible again), 
+	
+3. Output
+	Webpage? Video?
