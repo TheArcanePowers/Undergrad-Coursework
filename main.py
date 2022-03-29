@@ -4,9 +4,10 @@
 
 # RoadMap 1
 
-from re import A
-import re
-from simulations import SimpleSIER
+from re import T
+from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
+from numpy import var 
+from simulations import Simulation
 
 # asks for input of population size
 while True:
@@ -21,43 +22,66 @@ while True:
 if population_size >=1 and population_size < 10:
     reduction = population_size * 10**3
     reduction_by = 10**3
-    print(reduction)
+    
 elif population_size >=10 and population_size < 100:
     reduction = population_size * 10**2
     reduction_by = 10 //10**2
+    
 elif population_size >=100 and population_size < 1000:
     reduction = population_size * 10
     reduction_by = 10 // 10
+    
 elif population_size >=1000 and population_size < 10000:
     reduction = population_size * 1
+
 elif population_size >=10000 and population_size < 100000:
     reduction = population_size // 10
     reduction_by = 10*1
+   
 elif population_size >=100000 and population_size < 1000000:
     reduction = population_size // 10**2
     reduction_by = 10**2
+    
 elif population_size >=1000000 and population_size < 10000000:
     reduction = population_size // 10**3
     reduction_by = 10**3
-elif population_size >=10000000 and population_size < 68000000: #should not exceed 68m is Uk population
+    
+elif population_size >=10000000 and population_size <= 68000000: #should not exceed 68m is Uk population
     reduction = population_size // 10**4
     reduction_by = 10**4
-    print(reduction)
 else:
-    print("Please do not exceed the Uk Population of 68 million")
-    
-
-
-# find the size -> 0.5 x 10^6, so it does 0.5 x 10^3 and then remembers to multiply resilts by 10^3
-
+   if population_size >68000000:
+       print("Please do not exceed the Uk Population of 68 million")
+       
 # run the simulation
+# variant option for different infection and removal rates
+while True:
+    variant_choice= input("Please choose what variant you would like to simulate: (N) for Normal; Pre-Alpha Variant, (D) for Delta or (O) for Omicron")
+    if variant_choice in ("N", "D", "O"):
+        break
+    else:
+        print("Error: Please pick one of the variant options only")
+
+if variant_choice == "N":
+    infection_rate = 0.08 
+    removal_rate = 0.01
+
+
+elif variant_choice == "D":
+    infection_rate= 0.11
+    removal_rate= 0.001
+
+elif variant_choice == "O":
+    infection_rate= 0.3
+    removal_rate= 0.02
+
 
 # recieve results
 
 # diplay results
-
-viz = SimpleSIER(365)
-viz.plot("diffusion1.pdf")
+model, trends = Simulation(reduction, infection_rate, removal_rate).SimpleSEIR()
+viz = DiffusionTrend(model, trends)
+viz.plot("Simple_SEIR_MODEL.pdf")
 
 ############################################################################################################ ROADMAP 2
 # Turn STATIC MODEL INTO DYNAMIC MODEL
