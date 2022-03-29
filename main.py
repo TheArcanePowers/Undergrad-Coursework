@@ -5,7 +5,8 @@
 # RoadMap 1
 
 from re import T
-from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend 
+from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
+from numpy import var 
 from simulations import Simulation
 
 # asks for input of population size
@@ -52,12 +53,33 @@ else:
    if population_size >68000000:
        print("Please do not exceed the Uk Population of 68 million")
        
-10# run the simulation
+# run the simulation
+# variant option for different infection and removal rates
+while True:
+    variant_choice= input("Please choose what variant you would like to simulate: (N) for Normal; Pre-Alpha Variant, (D) for Delta or (O) for Omicron")
+    if variant_choice in ("N", "D", "O"):
+        break
+    else:
+        print("Error: Please pick one of the variant options only")
+
+if variant_choice == "N":
+    infection_rate = 0.08 
+    removal_rate = 0.01
+
+
+elif variant_choice == "D":
+    infection_rate= 0.11
+    removal_rate= 0.001
+
+elif variant_choice == "O":
+    infection_rate= 0.3
+    removal_rate= 0.02
+
 
 # recieve results
 
 # diplay results
-model, trends = Simulation(reduction).SimpleSEIR()
+model, trends = Simulation(reduction, infection_rate, removal_rate).SimpleSEIR()
 viz = DiffusionTrend(model, trends)
 viz.plot("Simple_SEIR_MODEL.pdf")
 
