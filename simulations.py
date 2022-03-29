@@ -7,11 +7,11 @@ import dynetx as dn
 import ndlib.models.dynamic as dm
 
 class Simulation():
-    def __init__(self):
-        pass
+    def __init__(self, node_number):
+        self.node_number = node_number
 
     ## RoadMap 1
-    def SimpleSEIR(self, node_number: int, removal_rate: int = 0.05, infection_rate: int = 0.9, latent_period: int = 0.33, fraction_infected: int = 0.05, time_simulated: int = 365):
+    def SimpleSEIR(self, removal_rate: int = 0.05, infection_rate: int = 0.9, latent_period: int = 0.33, fraction_infected: int = 0.05, time_simulated: int = 365):
         """Simple SIER model function, requires input of erdos renyi graph's node numbers. Allows for custom rates, defaults are explained in Project Report.
 
         Args:
@@ -27,9 +27,10 @@ class Simulation():
             list: list of trends
 
         """
+        print(f"Running sim with {self.node_number} for {time_simulated}")
 
         # Network topology
-        g = nx.erdos_renyi_graph(node_number, 0.003)  # (n, p) - nodes, probabilty for edge creation
+        g = nx.erdos_renyi_graph(self.node_number, 0.01)  # (n, p) - nodes, probabilty for edge creation
 
         # Model selection
         model = ep.SEIRModel(g)
@@ -67,3 +68,7 @@ class Simulation():
         model.set_initial_status(config)
 
         return
+
+if __name__ == "__main__":
+    viz = Simulation(100).SimpleSIER()
+    viz.plot("results.pdf")
