@@ -3,7 +3,6 @@
 # Roadmap 1: create model with function 1, then feed that and data into function 2 and get output from function 2
 
 # RoadMap 1
-
 from re import T
 from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
 from numpy import var 
@@ -88,7 +87,7 @@ viz.plot("Simple_SEIR_MODEL.pdf")
 
 ## ROADMAP 2
 # 1. compares model to real world data (takes input the model object)
-# DIFFUSION ON DYNAMIC NETWORKS - DO A SIR DYNAMIC MODEL
+# DIFFUSION ON DYNAMIC NETWORKS - DO A SIR DYNAMIC MODEL 
 
 # ROADMAP 3
 # 1. Function that reads vaccination data - MAKE IT INTO UTLDR
