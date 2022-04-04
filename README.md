@@ -35,4 +35,6 @@ six, matplotlib
 3. Introduce vaccination model, for each place  
 	-https://www.healthdata.org/covid/covid-19-vaccine-efficacy-summary 
 	this gives us the probabillity of it stopping the Covid variant use this and we  
-	can find out what it does to infection rate.
+	can find out what it does to infection rate one thing I reliazed was that some vaccines aren't 
+	in the UK but we can just use thos that are also another problem we have a seperate dictionary 
+	for every diffrent variant

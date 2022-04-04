@@ -1,4 +1,5 @@
-# Roadmap 1
+# Roadmap 1 
+import csv 
 import networkx as nx
 import ndlib.models.ModelConfig as mc
 import ndlib.models.epidemics as ep
@@ -92,11 +93,10 @@ class Simulation():
         print("Competed simulating snapshots")
 
         return model, trends 
-    def vaccination(self,infection_rate):   
-        #make a directonary where you have the probabilities of infection and the diffrent covid variants
-        if vaccine,infection = Astrazenca,Omicron  
-            self.infection_rate =self.infection_rate*(0.36) 
 
+     
+
+        
 if __name__ == "__main__":
     from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
     model, trends = Simulation(1000).SimpleSEIR()
