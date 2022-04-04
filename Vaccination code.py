@@ -1,5 +1,5 @@
 #we got to do this for each variant like its a diffrent data set every time ref jpeg  
-input=("Type in a Vaccine for Omnicron?") 
+input=["Type in a Vaccine for Omnicron?"] 
 def vaccination_Omnicron():  
     global input  
 #make a dictionary where you have the probabilities of infection and the diffrent covid variants  
@@ -16,9 +16,9 @@ def vaccination_Omnicron():
         SinoPharm="0.35" ,
         Sputnik_V="0.44" ,
     ) 
-    for i,k in omicron_vaccine_data.items(): 
-        if input == str(i):   
-            print(i[k]) 
+    infection_rates = list(omicron_vaccine_data.keys()) 
+    if input == omicron_vaccine_data.values(): 
+        print(omicron_vaccine_data.items())  
 
 
 
