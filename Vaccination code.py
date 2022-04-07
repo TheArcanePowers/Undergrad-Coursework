@@ -24,6 +24,6 @@ def get_key(val):
  
     return "There is no such value"
 
-
-print(get_key(0.44))
+#Problem is when you get two Vaccines with the same infection rate it only outputs one
+print(get_key(0.36))
 
