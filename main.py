@@ -11,6 +11,7 @@ from vaccination_data import omicron_vaccine_data
 
 
 
+
 # asks for input of population size
 while True:
     try:
@@ -54,6 +55,12 @@ elif population_size >=10000000 and population_size <= 68000000: #should not exc
 else:
    if population_size >68000000:
        print("Please do not exceed the Uk Population of 68 million")
+while True:
+    try:
+        days= int(input("How many days do you want to simulate for?"))
+        break
+    except ValueError:
+        print("Please enter a number only")
        
 # run the simulation
 # variant option for different infection and removal rates
@@ -84,18 +91,19 @@ while True:
         break
     else:
         print("Please choose a correct vaccine")
+
+
     
-
-
-
-
 
 # recieve results
 
 # diplay results
-model, trends = Simulation(reduction, infection_rate, removal_rate).SimpleSEIR()
+model, trends = Simulation(reduction, infection_rate, removal_rate, time_simulated= days).SimpleSEIR()
 viz = DiffusionTrend(model, trends)
 viz.plot("Simple_SEIR_MODEL.pdf")
+
+#p = viz.plot("Simple_SEIR_MODEL.pdf")
+#show(p)
 
 ############################################################################################################ ROADMAP 2
 # Turn STATIC MODEL INTO DYNAMIC MODEL
