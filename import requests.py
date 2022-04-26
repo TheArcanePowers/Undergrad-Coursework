@@ -19,4 +19,4 @@ pyprint(results.json())
 #right now we can get the java script data from a given website and it will turn it into a a python object SO "text" 
 #would be out python object in this case
 
-
+#first thing is we need to make a request then set parameters of that request so we can only get:Omicron,Normal,Delta infection and recovey and mortarilty statisics then we slap that in the simulation and boom done.
