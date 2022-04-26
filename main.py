@@ -7,6 +7,9 @@ from re import T
 from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
 from numpy import var 
 from simulations import Simulation
+from vaccination_data import omicron_vaccine_data
+
+
 
 # asks for input of population size
 while True:
@@ -73,6 +76,18 @@ elif variant_choice == "D":
 elif variant_choice == "O":
     infection_rate= 0.3
     removal_rate= 0.02
+
+while True:
+    print(list(omicron_vaccine_data.keys()))
+    vaccine_choice = input("Please choose what vaccine you would like to tackle the chosen variant")
+    if vaccine_choice in omicron_vaccine_data.keys():
+        break
+    else:
+        print("Please choose a correct vaccine")
+    
+
+
+
 
 
 # recieve results
