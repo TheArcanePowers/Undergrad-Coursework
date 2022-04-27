@@ -7,6 +7,10 @@ from re import T
 from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
 from numpy import var 
 from simulations import Simulation
+from vaccination_data import omicron_vaccine_data
+
+
+
 
 # asks for input of population size
 while True:
@@ -51,6 +55,12 @@ elif population_size >=10000000 and population_size <= 68000000: #should not exc
 else:
    if population_size >68000000:
        print("Please do not exceed the Uk Population of 68 million")
+while True:
+    try:
+        days= int(input("How many days do you want to simulate for?"))
+        break
+    except ValueError:
+        print("Please enter a number only")
        
 # run the simulation
 # variant option for different infection and removal rates
@@ -74,13 +84,26 @@ elif variant_choice == "O":
     infection_rate= 0.3
     removal_rate= 0.02
 
+while True:
+    print(list(omicron_vaccine_data.keys()))
+    vaccine_choice = input("Please choose what vaccine you would like to tackle the chosen variant")
+    if vaccine_choice in omicron_vaccine_data.keys():
+        break
+    else:
+        print("Please choose a correct vaccine")
+
+
+    
 
 # recieve results
 
 # diplay results
-model, trends = Simulation(reduction, infection_rate, removal_rate).SimpleSEIR()
+model, trends = Simulation(reduction, infection_rate, removal_rate, time_simulated= days).SimpleSEIR()
 viz = DiffusionTrend(model, trends)
 viz.plot("Simple_SEIR_MODEL.pdf")
+
+#p = viz.plot("Simple_SEIR_MODEL.pdf")
+#show(p)
 
 ############################################################################################################ ROADMAP 2
 # Turn STATIC MODEL INTO DYNAMIC MODEL

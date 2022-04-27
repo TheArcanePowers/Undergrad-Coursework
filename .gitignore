@@ -130,4 +130,8 @@ dmypy.json
 
 # PROJECT-SPECIFIC
 *.html
+<<<<<<< HEAD
 *.pdf
+=======
+Simpe_SEIR_MODEL.pdf
+>>>>>>> 83377ab (update gitignore)
