@@ -1,8 +1,8 @@
-# we got to do this for each variant like its a diffrent data set every time ref jpeg  
+# We got to do this for each variant like its a diffrent data set every time ref jpeg.  
 
-# make a dictionary where you have the probabilities of infection and the diffrent covid variants  
+# Make a dictionary where you have the probabilities of infection and the diffrent covid variants. 
 
-# vaccine, probability of infection rate  
+# Vaccine, probability of infection rate. 
 from logging import exception
 omicron_vaccine_data = { 
         "Astrazeneca":0.36, 
@@ -47,14 +47,14 @@ Delta_vaccine_data = {
         "Sputnik_V": 0.85,
     }
 
-# test
+# Tst
 # print(omicron_vaccine_data["Astrazeneca"]) 
 def get_key(val):
     for key, value in omicron_vaccine_data.items():
          if val == value:
-             return key
+             print(key)
  
-    return "There is no such value"
+    print("There is no such value.")
 
-#Problem is when you get two Vaccines with the same infection rate it only outputs one
-print(get_key(0.36))
+#Problem is when you get two Vaccines with the same infection rate it only outputs one.
+get_key(0.36)
