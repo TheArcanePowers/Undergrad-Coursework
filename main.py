@@ -53,16 +53,16 @@ while True:
         days = int(input("How many days do you want to simulate for?"))
         break
     except ValueError:
-        print("Please enter a number only")
+        print("Please enter a number only.")
 
 
 # variant option for different infection and removal rates
 while True:
-    variant_choice = input("Please choose what variant you would like to simulate: (N) for Normal; Pre-Alpha Variant, (D) for Delta or (O) for Omicron")
+    variant_choice = input("Please choose what variant you would like to simulate: (N) for Normal; Pre-Alpha Variant, (D) for Delta or (O) for Omicron.")
     if variant_choice in ("N", "D", "O"):
         break
     else:
-        print("Error: Please pick one of the variant options only")
+        print("Error: Please pick one of the variant options only.")
 
 if variant_choice == "N":
     infection_rate = 0.08
@@ -77,11 +77,11 @@ elif variant_choice == "O":
 
 while True:
     print(list(omicron_vaccine_data.keys()))
-    vaccine_choice = input("Please choose what vaccine you would like to tackle the chosen variant")
+    vaccine_choice = input("Please choose what vaccine you would like to tackle the chosen variant: ")
     if vaccine_choice in omicron_vaccine_data.keys():
         break
     else:
-        print("Please choose a correct vaccine")
+        print("Please choose a correct vaccine.")
 
 
 # diplay results
