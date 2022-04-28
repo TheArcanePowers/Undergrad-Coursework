@@ -47,7 +47,7 @@ Delta_vaccine_data = {
         "Sputnik_V": 0.85,
     }
 
-# Tst
+# Test
 # print(omicron_vaccine_data["Astrazeneca"]) 
 def get_key(val):
     for key, value in omicron_vaccine_data.items():
