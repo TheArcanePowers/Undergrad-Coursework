@@ -9,7 +9,7 @@ while True:
         population_size = int(input("Please enter a population size you would like to sample: "))
         break
     except ValueError:
-        print("Please enter only a number for the population size")
+        print("Please enter only a number for the population size.")
 
 
 # reduce that to make a model (divide by 500, 1000, etc...)
