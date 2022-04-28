@@ -6,7 +6,7 @@ from vaccination_data import omicron_vaccine_data
 # asks for input of population size
 while True:
     try:
-        population_size = int(input("Please enter a population size you would like to sample:"))
+        population_size = int(input("Please enter a population size you would like to sample: "))
         break
     except ValueError:
         print("Please enter only a number for the population size")
