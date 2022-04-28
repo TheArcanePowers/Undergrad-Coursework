@@ -3,7 +3,7 @@ from simulations import Simulation
 from vaccination_data import omicron_vaccine_data
 
 
-# asks for input of population size
+# Asks for input of population size
 while True:
     try:
         population_size = int(input("Please enter a population size you would like to sample: "))
@@ -12,7 +12,7 @@ while True:
         print("Please enter only a number for the population size.")
 
 
-# reduce that to make a model (divide by 500, 1000, etc...)
+# Reduce that to make a model (divide by 500, 1000, etc...)
 if population_size >= 1 and population_size < 10:
     reduction = population_size * 10**3
     reduction_by = 10**3
@@ -40,7 +40,7 @@ elif population_size >= 1000000 and population_size < 10000000:
     reduction = population_size // 10**3
     reduction_by = 10**3
 
-elif population_size >= 10000000 and population_size <= 68000000:  # should not exceed 68m is Uk population
+elif population_size >= 10000000 and population_size <= 68000000:  # Should not exceed 68m (Uk population).
     reduction = population_size // 10**4
     reduction_by = 10**4
 else:
@@ -56,7 +56,7 @@ while True:
         print("Please enter a number only.")
 
 
-# variant option for different infection and removal rates
+# Variant option for different infection and removal rates.
 while True:
     variant_choice = input("Please choose what variant you would like to simulate: (N) for Normal; Pre-Alpha Variant, (D) for Delta or (O) for Omicron.")
     if variant_choice in ("N", "D", "O"):
@@ -84,7 +84,7 @@ while True:
         print("Please choose a correct vaccine.")
 
 
-# diplay results
+# Diplay results
 model, trends = Simulation(reduction, infection_rate, removal_rate, time_simulated=days).SimpleSEIR()
 viz = DiffusionTrend(model, trends)
 viz.plot()
