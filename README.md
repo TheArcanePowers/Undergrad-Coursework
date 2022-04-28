@@ -32,9 +32,9 @@ six, matplotlib
 # RoadMap
 1. Simple SIR Model, comparing bristol's infections with an SIR model.
 2. Make that work for all of South England!
-3. Introduce vaccination model, for each place  
-	-https://www.healthdata.org/covid/covid-19-vaccine-efficacy-summary 
-	this gives us the probabillity of it stopping the Covid variant use this and we  
-	can find out what it does to infection rate one thing I reliazed was that some vaccines aren't 
-	in the UK but we can just use thos that are also another problem we have a seperate dictionary 
-	for every diffrent variant
+3. Introduce vaccination model for each place, 
+	-https://www.healthdata.org/covid/covid-19-vaccine-efficacy-summary, 
+	this gives us the probabillity of it stopping the Covid variant. Use this and we  
+	can find out what it does to the infection rate. One thing I reliazed was that some vaccines aren't 
+	in the UK but we can just use those that are. Another problem is that we have a seperate dictionary 
+	for every diffrent variant.
