@@ -45,7 +45,7 @@ elif population_size >= 10000000 and population_size <= 68000000:  # should not 
     reduction_by = 10**4
 else:
     if population_size > 68000000:
-        print("Please do not exceed the Uk Population of 68 million")
+        print("Please do not exceed the Uk Population of 68 million.")
 
 
 while True:
