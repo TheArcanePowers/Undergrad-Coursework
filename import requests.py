@@ -1,19 +1,12 @@
 from tkinter import N
 import requests  
-from  requests import get  
+from  requests import get, request  
 from bs4 import BeautifulSoup 
 import pandas as pd 
 import numpy as np  
 import json 
-#try  
-header = {}
-url = "https://opendata.bristol.gov.uk/explore/embed/dataset/covid-19-cases/table/?sort=specimen_date?SELECT Bristol,City FROM Area name" 
-#execept so it doesnt break on this line of code
-results = requests.get(url)  
-doc = BeautifulSoup(results.text,"html.parser")  
-doc1 = doc.find_all(type = "str") 
-print(doc1)
-#right now we can get the java script data from a given website and it will turn it into a a python object SO "text" 
-#would be out python object in this case
 
-#html parse 
+parameters="fields": {"area_name": "Bath and North East Somerset", "specimen_date": "2020-10-20", "daily_lab_confirmed_cases": 71, "cumulative_lab_confirmed_cases": 1393, "cumulative_lab_confirmed_cases_rate": 720.7, "geo_shape" 
+url="https://opendata.bristol.gov.uk/api/v2/catalog/datasets/covid-19-cases/records?text=%22Somerset%22" 
+result = request.get(url)  
+jspn.dump(results)
