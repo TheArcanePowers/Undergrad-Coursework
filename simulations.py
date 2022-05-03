@@ -136,11 +136,6 @@ class Simulation():
         model.add_status("Dead")
         model.add_status("Vaccinated")
 
-        # custom
-        self.infection_rate = 0.1
-
-        print(self.infection_rate, self.removal_rate, self.time_simulated)
-
         # Compartment definition
         c1 = cpm.NodeStochastic(self.infection_rate, triggering_status="Infected")  # Susceptible -> Exposed - Node Stochastic
         c2 = cpm.NodeStochastic(0.35)  # 95% probability after 7 iterations # Exposed -> Infectious - Count Down
