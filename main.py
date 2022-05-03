@@ -1,6 +1,6 @@
 from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
-from simulations import Simulation
-from vaccination_data import omicron_vaccine_data
+from assets.simulations import Simulation
+from assets.vaccination_data import omicron_vaccine_data
 
 
 # Asks for input of population size
