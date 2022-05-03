@@ -167,6 +167,7 @@ class Simulation():
         return model, trends
 
 
+# for debugging
 if __name__ == "__main__":
     from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
     model, trends = Simulation(node_number=1000, time_simulated=40).CustomVaccineModel()

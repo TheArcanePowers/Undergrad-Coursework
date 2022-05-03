@@ -1,13 +1,34 @@
 # EMAT10006
 Assignment for Further Computer Programming
 
+main.py is an interactive 
+
 Your repository should have a README.md file which you can use to explain from a high-level how to run the programs from the repository after cloning it. An md file can be plain text or it can be formatted using markdown: https://guides.github.com/features/mastering-markdown/
 
 https://ndlib.readthedocs.io/en/latest/installing.html
 
+## Installation
+
+Clone the repo, and main.py is ready for use!
 
 # Requirements
 six, matplotlib
+
+```bash
+git clone https://github.com/TheArcanePowers/EMAT10006
+```
+
+## Usage
+
+```bash
+python3 main.py
+```
+
+Script will then ask for 
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
+
 
 # RoadMap
 1. Get the data
