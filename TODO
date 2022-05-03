@@ -11,3 +11,13 @@ Clean code for pep8 compliance
 
 main - CLI - https://codeburst.io/building-beautiful-command-line-interfaces-with-python-26c7e1bb54df
 simulations.py - 
+
+
+figure out how many are dead - statistics of completed model output
+
+
+
+
+1. Ask what model to use (simple, dynamic, custom)
+2. run with whatever model
+3. based on what model tnhey;ve chosen, we make that output right (by calling Suscetuve, etc, etc, etc)
