@@ -118,6 +118,12 @@ for i in trends[0]["trends"]["node_count"]:
    print("Value:", trends[0]["trends"]["node_count"][i][-1])
 
 
+from ndlib.viz.mpl.TrendComparison import DiffusionTrendComparison
+viz=DiffusionTrendComparison([model],[trends],statuses=['infection_rate', 'removal_rate'])
+viz.plot()
+
+
+
 ####################################################
 # What's left?
 # Model Comparison https://ndlib.readthedocs.io/en/latest/reference/viz/mpl/TrendComparison.html
