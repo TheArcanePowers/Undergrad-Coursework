@@ -1,11 +1,10 @@
 # EMAT10006
 Assignment for Further Computer Programming
 
-main.py is an interactive 
+main.py is an interactive script that offers a large variety of settings for running simulations.
 
-Your repository should have a README.md file which you can use to explain from a high-level how to run the programs from the repository after cloning it. An md file can be plain text or it can be formatted using markdown: https://guides.github.com/features/mastering-markdown/
-
-https://ndlib.readthedocs.io/en/latest/installing.html
+Simulations offered include: Static SEIR, Dynamic SIR, Static Custom COVID model
+Takes in input of population size, and which strain to model.
 
 ## Installation
 
@@ -19,43 +18,8 @@ git clone https://github.com/TheArcanePowers/EMAT10006
 ```
 
 ## Usage
+main.py is ready for use right out the box! Script will run on interactive mode, where it will determine the arguments to run simulations for.
 
 ```bash
 python3 main.py
 ```
-
-Script will then ask for 
-
-## License
-[MIT](https://choosealicense.com/licenses/mit/)
-
-
-# RoadMap
-1. Get the data
-	Webscraper - you put a specific country and it gets whatever data from that country
-		APIs for population, age, etc.
-		
-2. From that data, run a variety of simulations
-	SIR
-	Vaccines, making people immune for a short time. Initial vaccine percentage
-	Social distancing
-	SIR+ (so people go from Removed (recovered) to susceptible again), 
-
-    Opinion dynamics - 
-	
-3. Output
-	Webpage? Video?
-
-4. Compare with actual data!
-    We compare the different
-
-
-# RoadMap
-1. Simple SIR Model, comparing bristol's infections with an SIR model.
-2. Make that work for all of South England!
-3. Introduce vaccination model for each place, 
-	-https://www.healthdata.org/covid/covid-19-vaccine-efficacy-summary, 
-	this gives us the probabillity of it stopping the Covid variant. Use this and we  
-	can find out what it does to the infection rate. One thing I reliazed was that some vaccines aren't 
-	in the UK but we can just use those that are. Another problem is that we have a seperate dictionary 
-	for every diffrent variant.

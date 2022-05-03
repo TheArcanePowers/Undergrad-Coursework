@@ -13,7 +13,7 @@ import ndlib.models.compartments as cpm
 class Simulation():
     """Main Simulation class, used for running all simulations by main program."""
 
-    def __init__(self, node_number, infection_rate: int = 0.01, removal_rate: int = 0.01, fraction_infected: int = 0.05, time_simulated: int = 365):
+    def __init__(self, node_number, infection_rate: int = 0.9, removal_rate: int = 0.025, fraction_infected: int = 0.05, time_simulated: int = 365):
         """Initialize shared variables used by all simulation models.
 
         Args:
@@ -103,7 +103,7 @@ class Simulation():
 
         return model, trends
 
-    def CustomVaccineModel(self):
+    def CustomVaccineModel(self, vaccination_rate:int = 0.01):
         """Custom simulation model based of SEIR incorporating deaths, incubation periods, and vaccination.
 
         Returns:
@@ -142,7 +142,7 @@ class Simulation():
         c3 = cpm.NodeStochastic(0.2)  # 95% after 14 iterations)  # Infectious -> Recover - Count Down
         c4 = cpm.NodeStochastic(self.removal_rate)  # Infectious -> Dead - Node Stochastic
         c5 = cpm.CountDown("susceptibility", iterations=84)  # Recovered, Vaccinated -> Susceptible - Count Down
-        c6 = cpm.NodeStochastic(0.001)  # Susceptible -> Vaccinated - Node Stochastic
+        c6 = cpm.NodeStochastic(vaccination_rate)  # Susceptible -> Vaccinated - Node Stochastic
 
         # Rule definition
         model.add_rule("Susceptible", "Exposed", c1)
@@ -165,12 +165,3 @@ class Simulation():
         trends = model.build_trends(iterations)
 
         return model, trends
-
-
-# for debugging
-if __name__ == "__main__":
-    from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
-    model, trends = Simulation(node_number=1000, time_simulated=40).CustomVaccineModel()
-    print(type(model))
-    viz = DiffusionTrend(model, trends)
-    viz.plot("new_results.pdf")
