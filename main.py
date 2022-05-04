@@ -2,6 +2,7 @@
 from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
 from assets.simulations import Simulation
 from assets.vaccination_data import omicron_vaccine_data
+from ndlib.viz.mpl.TrendComparison import DiffusionTrendComparison
 
 # Asks for input of population size
 while True:
@@ -118,7 +119,7 @@ for i in trends[0]["trends"]["node_count"]:
    print("Value:", trends[0]["trends"]["node_count"][i][-1])
 
 
-from ndlib.viz.mpl.TrendComparison import DiffusionTrendComparison
+
 viz=DiffusionTrendComparison([model],[trends],statuses=['infection_rate', 'removal_rate'])
 viz.plot()
 
