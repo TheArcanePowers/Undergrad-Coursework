@@ -125,6 +125,16 @@ vaccination_rate = input("Vaccination rate: ")
 model1, trends1 = Sim.CustomVaccineModel(vaccination_rate=vaccination_rate) # Custom Model
 viz=DiffusionTrendComparison([model, model1], [trends, trends1])
 viz.plot("GRAPH OUT")
+print(trends[0]["trends"]["node_count"])
+for i in trends[0]["trends"]["node_count"]:
+   print("Value:", trends[0]["trends"]["node_count"][i][-1])
+print(trends1[0]["trends1"]["node_count"])
+for i in trends1[0]["trends1"]["node_count"]:
+   print("Value:", trends1[0]["trends1"]["node_count"][i][-1])
+
+
+
+    
 
 
 
