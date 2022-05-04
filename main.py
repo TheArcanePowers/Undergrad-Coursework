@@ -123,6 +123,8 @@ for i in trends[0]["trends"]["node_count"]:
 model, trends = Sim.SimpleSEIR() # Simple Seir
 vaccination_rate = input("Vaccination rate: ")
 model1, trends1 = Sim.CustomVaccineModel(vaccination_rate=vaccination_rate) # Custom Model
+viz=DiffusionTrendComparison([model, model1], [trends, trends1])
+viz.plot()
 
 
 
