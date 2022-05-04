@@ -2,6 +2,7 @@
 from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
 from assets.simulations import Simulation
 from assets.vaccination_data import omicron_vaccine_data
+from ndlib.viz.mpl.TrendComparison import DiffusionTrendComparison
 
 # Asks for input of population size
 while True:
@@ -102,7 +103,7 @@ while True:
     if model_choice in ("S", "C"):
         break
     else:
-        print("Erro: Please choose only the two options listed.")
+        print("Error: Please choose only the two options listed.")
 if model_choice == "S":
     model, trends = Sim.SimpleSEIR()
 elif model_choice == "C":
@@ -118,9 +119,24 @@ for i in trends[0]["trends"]["node_count"]:
    print("Value:", trends[0]["trends"]["node_count"][i][-1])
 
 
-from ndlib.viz.mpl.TrendComparison import DiffusionTrendComparison
-viz=DiffusionTrendComparison([model],[trends],statuses=['infection_rate', 'removal_rate'])
-viz.plot()
+# Model comparison
+model, trends = Sim.SimpleSEIR() # Simple Seir
+vaccination_rate = input("Vaccination rate: ")
+model1, trends1 = Sim.CustomVaccineModel(vaccination_rate=vaccination_rate) # Custom Model
+viz=DiffusionTrendComparison([model, model1], [trends, trends1])
+viz.plot("GRAPH OUT")
+print(trends[0]["trends"]["node_count"])
+for i in trends[0]["trends"]["node_count"]:
+   print("Value:", trends[0]["trends"]["node_count"][i][-1])
+print(trends1[0]["trends1"]["node_count"])
+for i in trends1[0]["trends1"]["node_count"]:
+   print("Value:", trends1[0]["trends1"]["node_count"][i][-1])
+
+
+
+    
+
+
 
 
 
