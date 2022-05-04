@@ -103,7 +103,7 @@ while True:
     if model_choice in ("S", "C"):
         break
     else:
-        print("Erro: Please choose only the two options listed.")
+        print("Error: Please choose only the two options listed.")
 if model_choice == "S":
     model, trends = Sim.SimpleSEIR()
 elif model_choice == "C":
@@ -119,9 +119,10 @@ for i in trends[0]["trends"]["node_count"]:
    print("Value:", trends[0]["trends"]["node_count"][i][-1])
 
 
-
+# Model comparison
 viz=DiffusionTrendComparison([model],[trends],statuses=['infection_rate', 'removal_rate'])
-viz.plot()
+viz.plot("GRAPH OUT")
+
 
 
 
