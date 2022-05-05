@@ -3,7 +3,7 @@ Assignment for Further Computer Programming
 
 main.py is an interactive script that offers a large variety of settings for running simulations.
 
-Simulations offered include: Static SEIR, Dynamic SIR, Static Custom COVID model
+Simulation library offers: Static SEIR, Dynamic SIR, Static Custom COVID model
 Takes in input of population size, and which strain to model.
 
 ## Installation

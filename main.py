@@ -69,6 +69,10 @@ elif population_size >= 10000000 and population_size <= 10000000:  # Should not 
     reduction = population_size // 10**4
     reduction_by = 10**4
 
+else:
+    reduction = population_size // 10**5
+    reduction_by = 10**5
+
 while True:
     try:
         fraction_infected = float(input("\nWhat percentage of the chosen population do you want to start as infected? (0-1, >0.1 recommended): "))
@@ -99,15 +103,15 @@ while True:
 # TODO: Add to Project Report
 if variant_choice == "N":
     infection_rate = 0.08
-    removal_rate = 0.01
+    removal_rate = 0.05
     vaccine_data = Normal_vaccine_data
 elif variant_choice == "D":
     infection_rate = 0.11
-    removal_rate = 0.001
+    removal_rate = 0.05
     vaccine_data = Delta_vaccine_data
 elif variant_choice == "O":
     infection_rate = 0.3
-    removal_rate = 0.02
+    removal_rate = 0.1
     vaccine_data = Omicron_vaccine_data
 
 # Simulation
@@ -130,7 +134,7 @@ elif model_choice == "D":
 elif model_choice == "C":
     vaccine_choice = choose_vaccine()
     infection_rate
-    vaccination_rate = float(input("Vaccination rate (0-1, recommend >0.2): ").strip())
+    vaccination_rate = float(input("Vaccination rate (0-1, recommend 0.01): ").strip())
     # vaccine data set is percentage decrease of infection with vaccine. E.g Astazeneca on Ancestral has a reduction of 60% infection rate, 90% death rate.
     # TODO: Add death rate to this to show vaccine's impact on reducing deaths
     model, trends = Sim.CustomVaccineModel(vaccination_rate=vaccination_rate, vaccination_infection_rate=infection_rate*vaccine_data[vaccine_choice])
@@ -162,16 +166,17 @@ except:
 if input("\nRun Model comparison? (y/n): ").strip().lower() == "y":
     if model_choice == "S":
         vaccine_choice = choose_vaccine()
-        vaccination_rate = float(input("Vaccination rate: ").strip())
+        vaccination_rate = float(input("Vaccination rate (recommend 0.01): ").strip())
         model1, trends1 = Sim.CustomVaccineModel(vaccination_rate=vaccination_rate, vaccination_infection_rate=infection_rate*vaccine_data[vaccine_choice])  # Custom Model
         comparison_model_choice = "C"
     else:  # model_choice being custom or dyamic
-        model1, trends1 = Sim.SimpleSEIR()  # Simple Seir
-        comparison_model_choice = "s"
+        latent_period = 1/loat(input("Latent period (in days): ").strip()) # Since latent period is = 1/latent_input
+        model1, trends1 = Sim.SimpleSEIR(latent_period=latent_period)  # Simple Seir
+        comparison_model_choice = "S"
 
 viz2 = DiffusionTrend(model1, trends1)
 viz2.plot("output_2")
-comparative_viz = DiffusionTrendComparison([model, model1], [trends, trends1], ["Susceptible","Infected", "Recovered"])
+comparative_viz = DiffusionTrendComparison([model, model1], [trends, trends1], ["Susceptible", "Infected"])
 comparative_viz.plot("comparative_output")
 try:
     print("Opening output images...")
