@@ -41,7 +41,10 @@ class Simulation():
             list: list of trends
 
         """
-        print(f"Running sim with {self.node_number} nodes for {self.time_simulated} days")
+        print(f"Running SimpleSEIR sim with {self.node_number} nodes for {self.time_simulated} days")
+
+        if latent_period == 0:
+            raise ValueError("Latent period cannot be 0.")
 
         # Network topology
         g = nx.erdos_renyi_graph(self.node_number, 0.01)  # (n, p) - nodes, probabilty for edge creation
@@ -72,7 +75,7 @@ class Simulation():
             ndlib.models.dynamic.SIRModel.SIRModel: Type of model used.
             list: list of trends
         """
-        print(f"Running Dynamic SIR simulation for {self.time_simulated} days over {self.node_number} nodes...")
+        print(f"Running Dynamic SIR simulation for {self.time_simulated} days over {self.node_number} nodes.")
 
         # Dynamic Network topology
         dg = dn.DynGraph()
@@ -103,7 +106,7 @@ class Simulation():
 
         return model, trends
 
-    def CustomVaccineModel(self, vaccination_rate:int = 0.01):
+    def CustomVaccineModel(self, vaccination_rate: int = 0.01, vaccination_infection_rate: int = 0.5):
         """Custom simulation model based of SEIR incorporating deaths, incubation periods, and vaccination.
 
         Returns:
@@ -121,6 +124,7 @@ class Simulation():
         # Recovered to Susceptible - Count Down
 
         # Get original information for variants, and subtract the percentage decreased from vaccination.
+        print(f"Running Custom sim with {self.node_number} nodes for {self.time_simulated} days")
 
         # Network generation
         g = nx.erdos_renyi_graph(self.node_number, 0.01)  # (n, p) - nodes, probabilty for edge creation
@@ -141,8 +145,9 @@ class Simulation():
         c2 = cpm.NodeStochastic(0.35)  # 95% probability after 7 iterations # Exposed -> Infectious - Count Down
         c3 = cpm.NodeStochastic(0.2)  # 95% after 14 iterations)  # Infectious -> Recover - Count Down
         c4 = cpm.NodeStochastic(self.removal_rate)  # Infectious -> Dead - Node Stochastic
-        c5 = cpm.CountDown("susceptibility", iterations=84)  # Recovered, Vaccinated -> Susceptible - Count Down
+        c5 = cpm.NodeStochastic(0.019)  # 95% probability after 84 iterations (3 months) Recovered, Vaccinated -> Susceptible - Count Down
         c6 = cpm.NodeStochastic(vaccination_rate)  # Susceptible -> Vaccinated - Node Stochastic
+        #c7 = cpm.NodeStochastic(vaccination_infection_rate, triggering_status="Infected")  # Vaccinated -> Exposed (with reduced rate) - Node Stochastic
 
         # Rule definition
         model.add_rule("Susceptible", "Exposed", c1)
@@ -152,6 +157,7 @@ class Simulation():
         model.add_rule("Recovered", "Susceptible", c5)
         model.add_rule("Vaccinated", "Susceptible", c5)
         model.add_rule("Susceptible", "Vaccinated", c6)
+        #model.add_rule("Vaccinated", "Exposed", c7)
 
         # Model initial status configuration
         config = mc.Configuration()
