@@ -1,8 +1,11 @@
+from cmath import log
 import requests
 import pandas as pd   
 import matplotlib.pyplot as plt 
 import numpy as np
 confirmed_cases=[] 
+Deaths=[]  
+Recovered=[] 
 N=[]
 data = requests.get('https://pomber.github.io/covid19/timeseries.json') 
 json_data = data.json()   
@@ -11,11 +14,23 @@ json_data = data.json()
 for n in range(100):#number of days from intial starting date. 
     Dictionary = json_data['United Kingdom'][n] 
     confirmed= Dictionary['confirmed'] 
-    confirmed_cases.append(confirmed) 
+    deaths=Dictionary['deaths'] 
+    recovered=Dictionary['recovered']  
+    Recovered.append(recovered)  
+    confirmed_cases.append(confirmed)  
+    Deaths.append(deaths) 
     N.append(n)
 x=np.array(N) 
-y=np.array(confirmed_cases)   
-plt.plot(x,y)
-plt.xlabel("Time") 
-plt.ylabel("Confirmed Cases") 
-plt.show()  
+y=np.array(confirmed_cases)  
+d=np.array(Deaths) 
+c=np.array(Recovered)  
+plt.plot(x,y,color='r', label='Confirmed_Cases') 
+plt.plot(x,c,color='g', label='Recovered') 
+plt.plot(x,d,color='b', label='Deaths')
+plt.xlabel("Time(Days)")  
+#plt.clabel("Recovered") 
+#plt.dlabel("Dead")
+plt.ylabel("No.people")  
+plt.legend() 
+plt.show()   
+print(Dictionary)
