@@ -5,11 +5,15 @@ import requests
 import pandas as pd   
 import matplotlib.pyplot as plt 
 import numpy as np 
-print("This is a simulation of the Cases,Deaths and Recoveries.") 
-user_input=int(input("Please type the number of days you would want to simulate >900?"))
+print("This is a simulation of the Cases,Deaths and Recoveries in the UK.") 
+user_input=int(input("Please type the number of days you would want to simulate >=834?")) 
+try: 
+    user_input > 834 
+except: 
+    print("This is not what the prompt said?")
 confirmed_cases=[] 
 Deaths=[]  
-Recovered=[] 
+Recovered=[]  
 N=[]
 data = requests.get('https://pomber.github.io/covid19/timeseries.json') 
 json_data = data.json()   
