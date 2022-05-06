@@ -1,5 +1,7 @@
 #simulation for the United Kingdom 
-#Start date is 2020-1-22 
+#Start date is 2020-1-22  
+#using log scale can give you better insight into the differences in orders of mangitudes 
+#however you can omitted that if you want
 from cmath import log
 import requests
 import pandas as pd   
@@ -33,7 +35,8 @@ d=np.array(Deaths)
 c=np.array(Recovered)  
 plt.plot(x,y,color='r', label='Confirmed_Cases') 
 plt.plot(x,c,color='g', label='Recovered') 
-plt.plot(x,d,color='b', label='Deaths')
+plt.plot(x,d,color='b', label='Deaths') 
+plt.loglog(x)
 plt.xlabel("Time(Days)")  
 plt.ylabel("No.people")  
 plt.legend() 
