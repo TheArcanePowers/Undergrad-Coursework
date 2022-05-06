@@ -1,7 +1,7 @@
 from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
 from assets.simulations import Simulation
 from assets.vaccination_data import Omicron_vaccine_data, Normal_vaccine_data, Delta_vaccine_data
-from ndlib.viz.mpl.TrendComparison import DiffusionTrendComparison 
+from ndlib.viz.mpl.TrendComparison import DiffusionTrendComparison
 import Real_World_Simulation
 import os
 
@@ -17,6 +17,7 @@ print("  _________.__              .__          __                \n\
 /_______  /|__|__|_|  /____/|____(____  /__|  \\____/|__|   \n\
         \\/          \\/                \\/                   ")
 
+
 def choose_vaccine():
     while True:
         print()
@@ -26,6 +27,7 @@ def choose_vaccine():
             return vaccine_choice
         else:
             print("Error: Please choose a correct vaccine listed.")
+
 
 # Asks for input of population size
 while True:
@@ -171,7 +173,7 @@ if input("\nRun Model comparison? (y/n): ").strip().lower() == "y":
         model1, trends1 = Sim.CustomVaccineModel(vaccination_rate=vaccination_rate, vaccination_infection_rate=infection_rate*vaccine_data[vaccine_choice])  # Custom Model
         comparison_model_choice = "C"
     else:  # model_choice being custom or dyamic
-        latent_period = 1/loat(input("Latent period (in days): ").strip()) # Since latent period is = 1/latent_input
+        latent_period = 1/float(input("Latent period (in days): ").strip())  # Since latent period is = 1/latent_input
         model1, trends1 = Sim.SimpleSEIR(latent_period=latent_period)  # Simple Seir
         comparison_model_choice = "S"
 

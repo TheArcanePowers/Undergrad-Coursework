@@ -1,10 +1,12 @@
 # EMAT10006
 Assignment for Further Computer Programming
 
-main.py is an interactive script that offers a large variety of settings for running simulations.
+Simulation library (assets/simulations.py) offers: Static SEIR, Dynamic SIR, Static Custom COVID model, which can then be called to compare and model a vast variety of models.
 
-Simulation library offers: Static SEIR, Dynamic SIR, Static Custom COVID model
-Takes in input of population size, and which strain to model.
+main.py is an interactive script that showcases and runs COVID simulations with real-life data on spread and death rate, as well as allowing the user to compare the output of two different models with the same input.
+
+main.py plots and outputs images of simulation with given parameters, as well as printing final state output (numbers of Infected, Dead, etc.). This can then be compared with another model running the same parameters.
+
 
 ## Installation
 
