@@ -1,7 +1,8 @@
 from ndlib.viz.mpl.DiffusionTrend import DiffusionTrend
 from assets.simulations import Simulation
 from assets.vaccination_data import Omicron_vaccine_data, Normal_vaccine_data, Delta_vaccine_data
-from ndlib.viz.mpl.TrendComparison import DiffusionTrendComparison
+from ndlib.viz.mpl.TrendComparison import DiffusionTrendComparison 
+import Real_World_Simulation
 import os
 
 # Fix script working dir
@@ -189,3 +190,4 @@ print()
 print("### Comparative model output###")
 for i in trends1[0]["trends"]["node_count"]:
     print(values[comparison_model_choice][i], ":", trends1[0]["trends"]["node_count"][i][-1]*reduction_by)
+Real_World_Simulation()

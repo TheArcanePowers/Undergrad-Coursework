@@ -4,7 +4,9 @@ from cmath import log
 import requests
 import pandas as pd   
 import matplotlib.pyplot as plt 
-import numpy as np
+import numpy as np 
+print("This is a simulation of the Cases,Deaths and Recoveries.") 
+user_input=int(input("Please type the number of days you would want to simulate >900?"))
 confirmed_cases=[] 
 Deaths=[]  
 Recovered=[] 
@@ -12,7 +14,7 @@ N=[]
 data = requests.get('https://pomber.github.io/covid19/timeseries.json') 
 json_data = data.json()   
 #So we can set the argument of the range to however many data sets we want  
-for n in range(800):#number of days from intial starting date. 
+for n in range(user_input):#number of days from intial starting date. 
     Dictionary = json_data['United Kingdom'][n] 
     confirmed= Dictionary['confirmed'] 
     deaths=Dictionary['deaths'] 
