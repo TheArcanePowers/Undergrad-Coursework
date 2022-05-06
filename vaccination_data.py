@@ -19,7 +19,11 @@ Omicron_vaccine_data = {
     } 
 
 
+<<<<<<< HEAD
 Normal_vaccine_data= {
+=======
+Normal_vaccine_data = {
+>>>>>>> 201a3a730af7891a14b09cfa05b212f91830f38c
         "Astrazeneca": 0.63,
         "CanSino": 0.62,
         "CoronaVac": 0.47,
@@ -48,6 +52,10 @@ Delta_vaccine_data= {
     }
 
 user_input = input("Type a vaccine in here") 
-user_input1 = Omicron_vaccine_data
+<<<<<<< HEAD
+user_input1 = Delta_vaccine_data
+=======
+user_input1 = Delta_vaccine_data
+>>>>>>> 201a3a730af7891a14b09cfa05b212f91830f38c
 print(user_input1[user_input]) 
 
