@@ -1,4 +1,5 @@
-#simulation for the United Kingdom
+#simulation for the United Kingdom 
+#Start date is 2020-1-22 
 from cmath import log
 import requests
 import pandas as pd   
@@ -10,9 +11,8 @@ Recovered=[]
 N=[]
 data = requests.get('https://pomber.github.io/covid19/timeseries.json') 
 json_data = data.json()   
-#Start date is 2020-1-22 
 #So we can set the argument of the range to however many data sets we want  
-for n in range(100):#number of days from intial starting date. 
+for n in range(600):#number of days from intial starting date. 
     Dictionary = json_data['United Kingdom'][n] 
     confirmed= Dictionary['confirmed'] 
     deaths=Dictionary['deaths'] 
