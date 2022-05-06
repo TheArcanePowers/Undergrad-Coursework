@@ -4,7 +4,7 @@
 
 # vaccine, probability of infection rate  
 from logging import exception
-Omicron = { 
+Omicron_vaccine_data = { 
         "Astrazeneca":0.36, 
         "CanSino":0.32, 
         "CoronaVac":0.24, 
@@ -19,7 +19,7 @@ Omicron = {
     } 
 
 
-Normal = {
+Normal_vaccine_data = {
         "Astrazeneca": 0.63,
         "CanSino": 0.62,
         "CoronaVac": 0.47,
@@ -33,7 +33,7 @@ Normal = {
         "Sputnik_V": 0.86,
     } 
 
-Delta= {
+Delta_vaccine_data= {
         "Astrazeneca": 0.69,
         "CanSino": 0.61,
         "CoronaVac": 0.46,
@@ -48,6 +48,6 @@ Delta= {
     }
 
 user_input = input("Type a vaccine in here") 
-user_input1 = Delta
+user_input1 = Delta_vaccine_data
 print(user_input1[user_input]) 
 
