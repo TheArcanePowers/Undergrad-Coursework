@@ -13,8 +13,8 @@ for n in range(100):#number of days from intial starting date.
     confirmed= Dictionary['confirmed'] 
     confirmed_cases.append(confirmed) 
     N.append(n)
-x=np.array(confirmed_cases) 
-y=np.array(N)   
+x=np.array(N) 
+y=np.array(confirmed_cases)   
 plt.plot(x,y)
 plt.xlabel("Time") 
 plt.ylabel("Confirmed Cases") 
