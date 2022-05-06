@@ -13,13 +13,9 @@ for n in range(100):#number of days from intial starting date.
     confirmed= Dictionary['confirmed'] 
     confirmed_cases.append(confirmed) 
     N.append(n)
-x_points= np.array(confirmed_cases) 
-ypoints=np.array(N)   
-plt.plot(x_points, ypoints)
-plt.show()   
-lines=[]
-for i in range(100) : 
-    Gradient=ypoints/x_points  
-    lines.append(Gradient) 
-plt.subplot(lines) 
-plt.show()
+x=np.array(confirmed_cases) 
+y=np.array(N)   
+plt.plot(x,y)
+plt.xlabel("Time") 
+plt.ylabel("Confirmed Cases") 
+plt.show()  
