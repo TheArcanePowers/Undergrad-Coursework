@@ -20,8 +20,11 @@ parts/
 sdist/
 var/
 wheels/
+<<<<<<< HEAD
 pip-wheel-metadata/
 share/python-wheels/
+=======
+>>>>>>> EMAT10007temp/main
 *.egg-info/
 .installed.cfg
 *.egg
@@ -47,7 +50,6 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *.cover
-*.py,cover
 .hypothesis/
 .pytest_cache/
 
@@ -97,6 +99,9 @@ __pypackages__/
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid
+=======
+# celery beat schedule file
+celerybeat-schedule
 
 # SageMath parsed files
 *.sage.py
@@ -132,3 +137,14 @@ dmypy.json
 *.html
 *.pdf
 *.png
+=======
+# program specific (CUSTOM)
+EMAT10007/metrics.txt
+.vs/*
+/.vs
+.vs
+.vs/
+EMAT10007/bar_chart.pdf
+EMAT10007/test_encrypt.txt
+EMAT10007/test_decrypt.txt
+
