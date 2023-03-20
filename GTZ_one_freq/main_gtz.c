@@ -51,6 +51,8 @@ void main(void)
 	Clock_create(clk_SWI_GTZ_0697Hz, TIMEOUT, &clkParams, NULL);
 
 	mag1 = 32768.0; mag2 = 32768.0; freq1 = 697; // I am setting freq1 = 697Hz to test my GTZ algorithm with one frequency.
+	//mag1 = 32768.0; mag2 = 32768.0; freq1 = 1500; // I am setting freq1 = 697Hz to test my GTZ algorithm with one frequency.
+
 
 	/* Start SYS_BIOS */
     BIOS_start();
@@ -70,7 +72,7 @@ void clk_SWI_Generate_DTMF(UArg arg0)
 
 //	sample = (int) 32768.0*sin(2.0*PI*freq1*TICK_PERIOD*tick) + 32768.0*sin(2.0*PI*freq2*TICK_PERIOD*tick);
 	sample = (int) 32768.0*sin(2.0*PI*freq1*TICK_PERIOD*tick) + 32768.0*sin(2.0*PI*0*TICK_PERIOD*tick);
-	sample = sample >>12;
+	sample = sample >>12; //scales its down
 }
 
 /*
@@ -87,15 +89,41 @@ void clk_SWI_GTZ_0697Hz(UArg arg0)
    	static short delay_1 = 0;
    	static short delay_2 = 0;
 
-   	int prod1, prod2, prod3;
+   	int prod1, prod2, prod3, R_in;
 
-   	short input, coef_1;
+   	short input;//, coef_1;
+   	short coef_1 = 0x6D02; //hexa for 697
 
+   	R_in = sample;
 
-// to be completed
+   	input = (short) R_in;
+   	input = input >> 12;
 
+   	// first part
+    prod1 = (delay_1*coef_1)>>14;
+   	delay = input + (short)prod1 - delay_2;
+   	//
 
-    	gtz_out[0] = Goertzel_Value;
+   	if (N==206)
+   	{
+   		prod1 = (delay * delay);
+   		prod2 = (delay_1 * delay_1);
+   		prod3 = (delay * delay_1 * coef_1) >> 14;
+
+   		Goertzel_Value = (prod1 + prod2 - prod3);// >> 15;
+   		Goertzel_Value <<= 4;  // scale up for sensitivity
+   		N = 0;
+   		delay = delay_1 = delay_2 = 0;
+   	}
+
+   	//update delayed variables
+   	delay_2 = delay_1;
+   	delay_1 = delay;
+   	N++;
+   	//
+
+   	//gtz_out[0] = (((short) R_in) * ((short)Goertzel_Value)) >> 15;
+    gtz_out[0] = Goertzel_Value;
 
 
 }
