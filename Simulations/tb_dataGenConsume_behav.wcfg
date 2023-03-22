@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_dataGenConsume_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="common_pack" />
+            <top_module name="tb_dataGenConsume" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="63,525.590826 us"></ZoomStartTime>
+      <ZoomEndTime time="65,296.081835 us"></ZoomEndTime>
+      <Cursor1Time time="65,001.000000 us"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="96"></NameColumnWidth>
+      <ValueColumnWidth column_width="72"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="27" />
+   <wvobject fp_name="/tb_dataGenConsume/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/reset" type="logic">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_start" type="logic">
+      <obj_property name="ElementShortName">sig_start</obj_property>
+      <obj_property name="ObjectShortName">sig_start</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/ctrl_genDriv" type="logic">
+      <obj_property name="ElementShortName">ctrl_genDriv</obj_property>
+      <obj_property name="ObjectShortName">ctrl_genDriv</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/ctrl_consDriv" type="logic">
+      <obj_property name="ElementShortName">ctrl_consDriv</obj_property>
+      <obj_property name="ObjectShortName">ctrl_consDriv</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_dataReady" type="logic">
+      <obj_property name="ElementShortName">sig_dataReady</obj_property>
+      <obj_property name="ObjectShortName">sig_dataReady</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_seqDone" type="logic">
+      <obj_property name="ElementShortName">sig_seqDone</obj_property>
+      <obj_property name="ObjectShortName">sig_seqDone</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_rxDone" type="logic">
+      <obj_property name="ElementShortName">sig_rxDone</obj_property>
+      <obj_property name="ObjectShortName">sig_rxDone</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_rxNow" type="logic">
+      <obj_property name="ElementShortName">sig_rxNow</obj_property>
+      <obj_property name="ObjectShortName">sig_rxNow</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_ovErr" type="logic">
+      <obj_property name="ElementShortName">sig_ovErr</obj_property>
+      <obj_property name="ObjectShortName">sig_ovErr</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_framErr" type="logic">
+      <obj_property name="ElementShortName">sig_framErr</obj_property>
+      <obj_property name="ObjectShortName">sig_framErr</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_txNow" type="logic">
+      <obj_property name="ElementShortName">sig_txNow</obj_property>
+      <obj_property name="ObjectShortName">sig_txNow</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_txDone" type="logic">
+      <obj_property name="ElementShortName">sig_txDone</obj_property>
+      <obj_property name="ObjectShortName">sig_txDone</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_rx" type="logic">
+      <obj_property name="ElementShortName">sig_rx</obj_property>
+      <obj_property name="ObjectShortName">sig_rx</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_tx" type="logic">
+      <obj_property name="ElementShortName">sig_tx</obj_property>
+      <obj_property name="ObjectShortName">sig_tx</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_rx_debug" type="logic">
+      <obj_property name="ElementShortName">sig_rx_debug</obj_property>
+      <obj_property name="ObjectShortName">sig_rx_debug</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_rxData" type="array">
+      <obj_property name="ElementShortName">sig_rxData[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sig_rxData[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_txData" type="array">
+      <obj_property name="ElementShortName">sig_txData[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sig_txData[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_byte" type="array">
+      <obj_property name="ElementShortName">sig_byte[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sig_byte[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_maxIndex" type="array">
+      <obj_property name="ElementShortName">sig_maxIndex[2:0][3:0]</obj_property>
+      <obj_property name="ObjectShortName">sig_maxIndex[2:0][3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_dataResults" type="array">
+      <obj_property name="ElementShortName">sig_dataResults[0:6][7:0]</obj_property>
+      <obj_property name="ObjectShortName">sig_dataResults[0:6][7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_numWords_bcd" type="array">
+      <obj_property name="ElementShortName">sig_numWords_bcd[2:0][3:0]</obj_property>
+      <obj_property name="ObjectShortName">sig_numWords_bcd[2:0][3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/sig_data" type="array">
+      <obj_property name="ElementShortName">sig_data[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sig_data[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/seqCount" type="other">
+      <obj_property name="ElementShortName">seqCount</obj_property>
+      <obj_property name="ObjectShortName">seqCount</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/SEQ_COUNT_MAX" type="other">
+      <obj_property name="ElementShortName">SEQ_COUNT_MAX</obj_property>
+      <obj_property name="ObjectShortName">SEQ_COUNT_MAX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/RESULTS" type="array">
+      <obj_property name="ElementShortName">RESULTS[0:1][0:6][7:0]</obj_property>
+      <obj_property name="ObjectShortName">RESULTS[0:1][0:6][7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/peak" type="array">
+      <obj_property name="ElementShortName">peak[0:1][2:0][3:0]</obj_property>
+      <obj_property name="ObjectShortName">peak[0:1][2:0][3:0]</obj_property>
+   </wvobject>
+</wave_config>

@@ -1,0 +1,14 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../vivado_simulation.srcs/sources_1/imports/peak_detector/UART_RX_CTRL.vhd" \
+"../../../../vivado_simulation.srcs/sources_1/imports/peak_detector/UART_TX_CTRL.vhd" \
+"../../../../vivado_simulation.srcs/sources_1/imports/peak_detector/common_pack.vhd" \
+"../../../../vivado_simulation.srcs/sources_1/imports/peak_detector/cmdProcWrapper.vhd" \
+"../../../../vivado_simulation.srcs/sources_1/imports/peak_detector/cmdProc_synthesised.vhd" \
+"../../../../vivado_simulation.srcs/sources_1/imports/peak_detector/dataConsumeWrapper.vhd" \
+"../../../../vivado_simulation.srcs/sources_1/imports/peak_detector/signed/dataConsume_synthesised_signed.vhd" \
+"../../../../vivado_simulation.srcs/sources_1/imports/peak_detector/dataGen.vhd" \
+"../../../../vivado_simulation.srcs/sources_1/imports/peak_detector/signed/tb_dataGenConsume_signed.vhd" \
+
+# Do not sort compile order
+nosort
