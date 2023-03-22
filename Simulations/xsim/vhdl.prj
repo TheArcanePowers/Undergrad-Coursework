@@ -1,0 +1,12 @@
+vhdl xil_defaultlib  \
+"srcs/UART_RX_CTRL.vhd" \
+"srcs/UART_TX_CTRL.vhd" \
+"srcs/common_pack.vhd" \
+"srcs/cmdProcWrapper.vhd" \
+"srcs/cmdProc_synthesised.vhd" \
+"srcs/dataConsumeWrapper.vhd" \
+"srcs/dataConsume_synthesised_signed.vhd" \
+"srcs/dataGen.vhd" \
+"srcs/tb_dataGenConsume_signed.vhd" \
+
+nosort
