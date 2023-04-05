@@ -1,46 +1,38 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Creator: Leonardo Coppi <zq21377@bristol.ac.uk>
 -- 
 -- Create Date: 20.03.2023 10:49:18
--- Design Name: 
+-- Design Name: Command Processor V1.0.0
 -- Module Name: cmdProc - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
+-- Description: Needs to be checked for bugs which will I'm sure will be everywhere.
+--              Coded according to https://drive.google.com/file/d/1QkyLtYWADuGfPm52DExJHWDSIFzv5yYI/view?usp=sharing
 -- 
--- Dependencies: 
--- 
--- Revision:
+-- Revision: 1.00 - Needs to be bug checked!
 -- Revision 0.01 - File Created
 -- Additional Comments:
 -- 
 ----------------------------------------------------------------------------------
-
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 use work.common_pack.all; -- BDC_ARRAY-TYPE
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 entity cmdProc is
     port(
       clk:		    in std_logic;
       reset:		in std_logic;
-      rxNow:		in std_logic;
+      -- Rx --
+      rxNow:		in std_logic;                     -- (rx) valid?
       rxData:		in std_logic_vector (7 downto 0);
-      txData:		out std_logic_vector (7 downto 0);
       rxDone:		out std_logic;
       ovErr:		in std_logic;
       framErr:	    in std_logic;
+     -- Tx --
+      txData:		out std_logic_vector (7 downto 0);
       txNow:		out std_logic;
       txDone:		in std_logic;
+      -- Data Processor --
       start:        out std_logic;
       numWords_bcd: out BCD_ARRAY_TYPE(2 downto 0);
       dataReady:    in std_logic;
@@ -52,72 +44,186 @@ entity cmdProc is
 end cmdProc;
 
 architecture Behavioral of cmdProc is
-    -- SIGNAL DECLERATIONS
-    TYPE state_type IS (S0, S1, S2, S3);
+    -- SIGNAL DECLARATIONS
+    TYPE state_type IS (S0, S1, S2, S3, S4, S5, S6, S7);
     signal curState, nextState: state_type;
     --
-    signal dataReg: std_logic_vector (7 downto 0);
---    signal res_dataReg, en_dataReg: bit;
-    signal comReg: std_logic_vector (23 downto 0);
-    signal comReg_input: std_logic_vector (7 downto 0);
-    signal res_comReg, en_comReg, comReg_valid: bit;
-    signal comReg_count: integer;
+    signal globalCount: integer;
+    signal en_globalCount, res_globalCount: bit;
+    signal threeCount: integer;
+    signal en_threeCount, res_threeCount: bit;
+    -- S0 
+    signal dataReg: std_logic_vector(7 downto 0);
+	-- S2
+	signal commandValid: bit;
+    signal secondInputMode: bit;
+    -- S4
+    signal finalDataReg: std_logic_vector (55 downto 0);
+    
+    --S5
+    signal tempData: std_logic_vector(7 downto 0);
+    signal secondPhaseDone: bit;
+    --signal secondChar: bit;
+    
+    --signal comReg_count: integer;
     --
-    signal test: std_logic_vector (3 downto 0);
+    function hexToAscii(fourBitHex: std_logic_vector(3 downto 0)) return std_logic_vector is
+        variable eightBitAscii: std_logic_vector(7 downto 0);
+    begin
+        IF UNSIGNED(fourBitHex) >= 10 THEN
+            eightBitAscii := std_logic_vector( UNSIGNED(fourBitHex) + 55);
+        ELSE
+            eightBitAscii := std_logic_vector( UNSIGNED(fourBitHex) + 48);
+        END IF;
+    
+    end function;
+BEGIN
 
-begin
-
---State Logic
+-- State Logic
 nextState_logic: process(curState)
 BEGIN
+    -- set default variables
+    -- external signals
+    rxDone <= '0';
+    txNow <= '0';
+    -- internal signals
+    en_globalCount <= '0';
+    res_globalCount <= '0';
+    en_threeCount <= '0';
+    res_threeCount <= '0';
+    --
     CASE curState IS
-        WHEN S0 =>
-            IF rxNow='1' AND ovErr='0' AND framErr='0' THEN
-                dataReg <= rxData; -- Load in data. Comes in ASCII, we output in ASCII
-                txData <= rxData; -- Prepare to output data
-                rxDone <= '1'; -- Can start recieving next bit
-                txNow <= '1'; -- Can transmit data
+        WHEN S0 =>  -- AWAIT FOR INPUT
+            IF rxNow='1' AND NOT(ovErr='1' OR framErr='1') THEN
+                dataReg <= rxData;                      -- Load in data. Comes in ASCII, we output in ASCII
+                rxDone <= '1';                          -- Can start recieving next bit
+                txData <= rxData;                       -- Prepare to output data
+                txNow <= '1';                           -- Can transmit data
                 nextState <= S1;
             ELSE
                 nextState <= S0;
             END IF;
         
-        WHEN S1 =>
+        WHEN S1 =>  -- AWAIT FOR SUCCESSFULL ECHO
             IF txDone='1' THEN
                 nextState <= S2;
             ELSE
                 nextState <= S1;
             END IF;
         
-        WHEN S2 =>
+        WHEN S2 => -- INPUT PARSER
             IF dataReg = x"41" OR dataReg = x"61" THEN
-                res_comReg <= '1';
-                comReg_valid <= '1';
+                -- VALID A --
+                commandValid <= '1';                    -- Recived A/a. Number register now valid
+                res_globalCount <= '1';                 -- Resets counter
                 nextState <= S0;
-            ELSIF dataReg >= x"30" AND dataReg <= x"39" and comReg_valid = '1' THEN
-                comReg_input <= dataReg;
-                en_comReg <= '1';
-                IF comReg_count = 3 THEN
+            ELSIF dataReg >= x"30" AND dataReg <= x"39" and commandValid = '1' THEN
+                -- 0-9 and A/a previously recived --
+                numWords_bcd(globalCount) <= std_logic_vector(unsigned(dataReg) - 48); -- loads 0-2 4bit BCD value
+                en_globalCount <= '1';                  -- enables up counter.
+                IF globalCount = 2 THEN
+                    -- FULL COMMAND RECIEVED --
+                    res_globalCount <= '1';             -- Reset counter, no longer needed
+                    commandValid <= '0';                -- Need another a/A to continue
+                    start <= '1';                       -- Starts Data Processor
+                    secondInputMode <= '1';             -- Internal Signal
                     nextState <= S3;
-                    res_comReg <= '1';
-                    comReg_valid <= '0';
                 ELSE
-                    nextState <= S0;
+                    nextState <= S0;                    -- Await next input
                 END IF;
+            ELSIF (dataReg = x"50" OR dataReg = x"70" OR dataReg = x"4C" or dataReg = x"6C") AND (secondInputMode = '1') THEN
+                -- P/p/L/l and Full Command previously recieved -- 
+                res_globalCount <= '1';
+                res_threeCount <= '1';
+                nextState <= S5;
             ELSE
-                res_comReg <= '1';
-                comReg_valid <= '0';
+                -- assume interrupts semi-valid sequence. Must reset everything --
+                res_globalCount <= '1';
+                commandValid <= '0';
+                nextState <= S0;
             END IF;
             
-        WHEN S3 =>
---           std_logic_vector('0000');
-           --numWords_bcd(1) <= '0000';
-           --numWords_bcd(2) <= '0000';
-           
---           TO_INTEGER(comReg(7 downto 0));
---           numWords_bcd(0) <= std_logic_vector(comReg(7 downto 0) - 16#30#);
---           numWords_bcd(1) <= comReg(15 downto 8);
---           numWords_bcd(2) <= comReg(23 downto 16);
+        WHEN S3 =>  -- DATA PROCESSOR PHASE --
+            IF dataReady = '0' THEN
+                nextState <= S3;
+            ELSE
+                start <= '0';                           -- Stop data processor while we print recieved byte
+                IF globalCount = 0 THEN
+                    txData <= hexToAscii(byte(3 downto 0));    -- Loads up ascii hex for first 4 bits
+                ELSIF globalCount = 1 THEN
+                    txData <= hexToAscii(byte(7 downto 4));    -- Loads up ascii hex for second 4 bits
+                ELSE
+                    txData <= x"20";                     -- Loads up ascii space
+                    res_globalCount <= '1';              -- Resets counter so we can do hex print and space again
+                END IF;
+                en_globalCount <= '1';                  -- Increment counter
+                txNow <= '1';                           -- Start transmitting
+                nextState <= S4;
+            END IF;
+            
+        WHEN S4 =>  -- AWAIT FOR TRANSMISSION --
+            IF txDone = '0' THEN
+                nextState <= S4;
+            ELSE
+                IF seqDone = '0' THEN
+                    start <= '1';                       -- Resume data processor
+                    nextState <= S3;                    -- Go to S3 to wait for next byte
+                ELSE
+                    -- DATA FINISHED PROCESSING --
+                    --finalDataReg <= dataResults;
+                    nextState <= S0;                    -- Go to S0 to wait for second command
+                END IF;
+            END IF;
+            
+        WHEN S5 =>
+        -- Was horrifically complicated, so added extra state (S6)
+            IF dataReg = x"50" or dataReg = x"70" THEN  -- P or p
+                IF globalCount = 0 THEN                 -- Loads peak value in tempData. Goes to S6 which prints it
+                    tempData <= dataResults(4);
+                    nextState <= S6;
+                ELSIF globalCount = 1 THEN
+                    txData <= maxIndex(threeCount);
+                    en_threeCount <= '1';
+                    IF threeCount = 2 THEN
+                        secondPhaseDone <= '1';
+                    END IF;
+                    nextState <= S7;
+                ELSE
+                    nextState <= S0;                    -- error catching
+                END IF;
+            ELSIF dataReg = x"4C" or dataReg = x"6C" THEN   -- L or l
+                tempData <= dataResults(globalCount);   -- Loads certain byte in tempData. Checks if phase done. Goes to S6.
+                IF globalCount = 6 THEN
+                    secondPhaseDone <= '1';
+                END IF;
+                nextState <= S6;
+            ELSE
+                nextState <= S0;                        -- error catching
+            END IF;          
+            
+        WHEN S6 =>
+            IF threeCount = 0 THEN
+                txData <= hexToAscii(tempData(3 downto 0));
+            ELSIF threeCount = 1 THEN
+                txData <= hexToAscii(tempData(7 downto 4));
+            ELSE
+            -- When threeCounter reaches 2, it's finished its cycle and can move onto next byte of dataResult.
+                txData <= x"20";
+                en_globalCount <= '1';
+            END IF;
+            nextState <= S7;
+            
+        WHEN S7 =>
+            IF txDone = '0' THEN
+                nextState <= S6;
+            ELSE
+                IF secondPhaseDone = '1' THEN
+                    nextState <= S0;
+                    res_globalCount <= '1';
+                ELSE
+                    nextState <= S5;
+                END IF;
+            END IF;
             
     END CASE;
 END PROCESS;
@@ -125,10 +231,12 @@ END PROCESS;
 -- State Register
 State_register: process (reset, clk)
 BEGIN
-    IF reset='0' THEN
+    IF reset='1' THEN
       curState <= S0;
+      -- All signals set to 0 --
     ELSIF rising_edge(clk) THEN
-      curState <= nextState;
+        -- Could set all signals to default here as well--
+        curState <= nextState;
     END IF;
 END PROCESS;
 
@@ -137,32 +245,30 @@ combi_out: PROCESS(curState)
 BEGIN
 END PROCESS; -- combi_outputend Behavioral;
 
--- Need a RxReg 8 bits long for data recieved
---dataRegister: process(clk, res_dataReg, en_dataReg)
---BEGIN
---    IF res_dataReg = '1' THEN
---        dataReg <= "00000000";
---    ELSIF rising_edge(clk) THEN
---        IF en_dataReg = '1' THEN
---            dataRegister
-        
-        
---    END IF;
---END PROCESS;
-comRegister: process(clk, res_comReg)
+threeCounter: process(clk, res_threeCount)
+-- literally goes 0, 1, 2, 0, 1, 2 --
 BEGIN
-    IF res_comReg = '1' THEN
-        comReg <= x"000";
-        comReg_count <= 0;
+    IF res_threeCount = '1' THEN
+        threeCount <= 0;
     ELSIF rising_edge(clk) THEN
-        IF en_comReg = '1' THEN
-            -- shift left
-            comReg(23 downto 16) <= comReg(15 downto 8);
-            comReg(15 downto 8) <= comReg(7 downto 0);
-            -- add 8 bits
-            comReg(7 downto 0) <= comReg_input;
-            -- increment count
-            comReg_count <= comReg_count + 1;
+        IF en_threeCount = '1' THEN
+            IF threeCount = 2 THEN
+                threeCount <= 0;
+            ELSE
+                threeCount <= threeCount + 1;
+            END IF;
+        END IF;
+    END IF;
+END PROCESS;
+
+globalCounter: process(clk, res_globalCount)
+-- Added check for reset just to be sure that if reset and enable are both on, reset takes priority.
+BEGIN
+    IF res_globalCount = '1' THEN
+        globalCount <= 0;
+    ELSIF rising_edge(clk) THEN
+        IF en_globalCount = '1' and res_globalCount ='0' THEN
+            globalCount <= globalCount + 1;
         END IF;
     END IF;
 END PROCESS;
