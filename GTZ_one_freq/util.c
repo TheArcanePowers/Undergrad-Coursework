@@ -54,7 +54,7 @@ void task1_dtmfDetect(void)
 	while (1) {
 
 
-		Task_sleep(2000);  /* 0.25 second for 125us tick */
+		Task_sleep(200);  /* 0.25 second for 125us tick */
 
 
 		System_printf("\n The GTZ is %d\n", gtz_out[0]);

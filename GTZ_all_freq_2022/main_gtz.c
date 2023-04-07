@@ -93,12 +93,22 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
 	start = Timestamp_get32();
 
 	static int Goertzel_Value = 0;
-	short input = (short) (sample);
+	short input = (short) (sample);	// TODO: consider sizing this down?
 
 	/* TODO 1. Complete the feedback loop of the GTZ algorithm*/
 	/* ========================= */
+	int n;
+	static int prod1, prod2, prod3;	// need to be int to hold large products
+	static short delay, delay_1, delay_2 = 0;	// can be short due to small variable size to conserve memory
 
+	for (n = 0; n < 8; n++) {
+		int prod1 = (delay_1*coef[n])>>14;
+		delay = input + (short)prod1 - delay_2;
 
+		//update delayed variables
+		delay_2 = delay_1;
+		delay_1 = delay;
+	}
 	/* ========================= */
 	N++;
 
@@ -113,6 +123,19 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
 
 		/* TODO 2. Complete the feedforward loop of the GTZ algorithm*/
 		/* ========================= */
+		for (n = 0; n < 8; n++) {
+			int prod1 = (delay * delay);
+			int prod2 = (delay_1 * delay_1);
+			int prod3 = (delay * delay_1 * coef[n]) >> 14;
+
+			Goertzel_Value = (prod1 + prod2 - prod3);// >> 15;
+			Goertzel_Value <<= 4;  // scale up for sensitivity. Check??
+
+			gtz_out[n] = Goertzel_Value;
+
+			// reset
+			//delay = delay_1 = delay_2 = 0;
+		}
 
 		/* gtz_out[..] = ... */
 		/* ========================= */

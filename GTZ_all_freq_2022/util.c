@@ -35,8 +35,28 @@ void task1_dtmfDetect() {
 		while (!flag) Task_sleep(210);
 		/* TODO 3. Complete code to detect the 8 digits based on the GTZ output */
 		/* ========================= */
+		int row, col = 0;
+		int max_val = 0;
 
-		/* result[n] = ... */
+		// For each row, check the gtz value and find the one with the highest value
+		for (i = 0; i < 4; i++) {
+			if (gtz_out[i] > max_val) {
+				max_val = gtz_out[i];
+				row = i;
+			}
+		}
+
+		max_val = 0; // Clear last_max for column
+
+		// For each column, check the gtz value and find the one with the highest value
+		for (i = 4; i < 8; i++) {
+			if (gtz_out[i] > max_val) {
+				max_val = gtz_out[i];
+				col = i;
+			}
+		}
+
+		result[n] = pad[col][row];
 		/* ========================= */
 		printf("%c\n", result[n]);
 		flag = 0;

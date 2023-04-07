@@ -92,7 +92,7 @@ void clk_SWI_GTZ_0697Hz(UArg arg0)
    	int prod1, prod2, prod3, R_in;
 
    	short input;//, coef_1;
-   	short coef_1 = 0x6D02; //hexa for 697
+   	short coef_1 = 0x6D02; //hex for 697
 
    	R_in = sample;
 
@@ -111,7 +111,7 @@ void clk_SWI_GTZ_0697Hz(UArg arg0)
    		prod3 = (delay * delay_1 * coef_1) >> 14;
 
    		Goertzel_Value = (prod1 + prod2 - prod3);// >> 15;
-   		Goertzel_Value <<= 4;  // scale up for sensitivity
+   		Goertzel_Value <<= 1;  // scale up for sensitivity
    		N = 0;
    		delay = delay_1 = delay_2 = 0;
    	}
