@@ -50,3 +50,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+GTZ_all_freq_2022/.xdchelp
+*.defs
+*.bld
