@@ -53,3 +53,10 @@ dkms.conf
 GTZ_all_freq_2022/.xdchelp
 *.defs
 *.bld
+
+# Extras
+Debug/
+.launches/
+*.opt
+*.mk
+makefile

@@ -92,22 +92,22 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
    	//Record start time
 	start = Timestamp_get32();
 
-	static int Goertzel_Value = 0;
+	static int Goertzel_Value[8] = {0};
 	short input = (short) (sample);	// TODO: consider sizing this down?
 
 	/* TODO 1. Complete the feedback loop of the GTZ algorithm*/
 	/* ========================= */
 	int n;
-	static int prod1, prod2, prod3;	// need to be int to hold large products
-	static short delay, delay_1, delay_2 = 0;	// can be short due to small variable size to conserve memory
+	static int prod1[8], prod2[8], prod3[8] = {0};	// need to be int to hold large products
+	static short delay[8], delay_1[8], delay_2[8] = {0};	// can be short due to small variable size to conserve memory
 
 	for (n = 0; n < 8; n++) {
-		int prod1 = (delay_1*coef[n])>>14;
-		delay = input + (short)prod1 - delay_2;
+		prod1[n] = (delay_1[n]*coef[n])>>14;
+		delay[n] = input + (short)prod1[n] - delay_2[n];
 
 		//update delayed variables
-		delay_2 = delay_1;
-		delay_1 = delay;
+		delay_2[n] = delay_1[n];
+		delay_1[n] = delay[n];
 	}
 	/* ========================= */
 	N++;
@@ -124,17 +124,27 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
 		/* TODO 2. Complete the feedforward loop of the GTZ algorithm*/
 		/* ========================= */
 		for (n = 0; n < 8; n++) {
-			int prod1 = (delay * delay);
-			int prod2 = (delay_1 * delay_1);
-			int prod3 = (delay * delay_1 * coef[n]) >> 14;
+			//int *testpointer;
+			//testpointer = &coef;
 
-			Goertzel_Value = (prod1 + prod2 - prod3);// >> 15;
-			Goertzel_Value <<= 4;  // scale up for sensitivity. Check??
+			prod1[n] = (delay[n] * delay[n]);
+			prod2[n] = (delay_1[n] * delay_1[n]);
+			prod3[n] = (delay[n] * delay_1[n] * coef[n]) >> 14;
 
-			gtz_out[n] = Goertzel_Value;
+			Goertzel_Value[n] = (prod1[n] + prod2[n] - prod3[n]) >> 8;
+			//Goertzel_Value <<= 4;  // scale up for sensitivity. Check??
 
-			// reset
-			//delay = delay_1 = delay_2 = 0;
+			gtz_out[n] = Goertzel_Value[n];
+		}
+		//reset all!
+		int k;
+		for(k=0; k<8; k++) {
+			prod1[k] = 0;
+			prod2[k] = 0;
+			prod3[k] = 0;
+			delay[k] = 0;
+			delay_1[k] = 0;
+			delay_2[k] = 0;
 		}
 
 		/* gtz_out[..] = ... */
@@ -146,5 +156,6 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
 		stop = Timestamp_get32();
 		//Record elapsed time
 		tdiff_final = stop-start;
+
 	}
 }
