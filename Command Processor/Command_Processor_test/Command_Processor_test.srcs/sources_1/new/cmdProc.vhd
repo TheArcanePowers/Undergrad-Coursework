@@ -209,7 +209,7 @@ BEGIN
             	IF globalCount = 0 THEN
                 tempData <= finalDataReg(6);   -- Loads certain byte in tempData. Checks if phase done. Goes to S6.
                 ELSIF globalCount = 1 THEN
-                tempData <= finalDataReg(5);   -- From LSB (leftmost byte value)
+                tempData <= finalDataReg(5);   -- From MSB (leftmost byte value)
                 ELSIF globalCount = 2 THEN
                 tempData <= finalDataReg(4);
                 ELSIF globalCount = 3 THEN
@@ -219,7 +219,7 @@ BEGIN
                 ELSIF globalCount = 5 THEN
                 tempData <= finalDataReg(1);
                 ELSIF globalCount = 6 THEN
-                tempData <= finalDataReg(0);   -- To MSB (rightmost byte value)
+                tempData <= finalDataReg(0);   -- To LSB (rightmost byte value)
                     secondPhaseDone <= '1';
                 ELSE null; -- avoid undefined states
                 END IF;
