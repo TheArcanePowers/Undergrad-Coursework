@@ -7,6 +7,7 @@
 -- Description: Needs to be checked for bugs which will I'm sure will be everywhere.
 --              Coded according to https://drive.google.com/file/d/1QkyLtYWADuGfPm52DExJHWDSIFzv5yYI/view?usp=sharing
 -- 
+-- Revision 1.01 - Bug checked, needs testing
 -- Revision: 1.00 - Needs to be bug checked!
 -- Revision 0.01 - File Created
 -- Additional Comments:
@@ -38,7 +39,7 @@ entity cmdProc is
       dataReady:    in std_logic;
       byte:         in std_logic_vector(7 downto 0);
       maxIndex:     in BCD_ARRAY_TYPE(2 downto 0);
-      dataResults:  in CHAR_ARRAY_TYPE(0 to RESULT_BYTE_NUM-1);
+      dataResults:  in CHAR_ARRAY_TYPE(0 to RESULT_BYTE_NUM-1); 
       seqDone:      in std_logic
       );
 end cmdProc;
@@ -55,10 +56,11 @@ architecture Behavioral of cmdProc is
     -- S0 
     signal dataReg: std_logic_vector(7 downto 0);
 	-- S2
+    signal bcdReg: BCD_ARRAY_TYPE(2 downto 0); -- for numWords and maxIndex
 	signal commandValid: bit;
     signal secondInputMode: bit;
     -- S4
-    signal finalDataReg: std_logic_vector (55 downto 0);
+    signal finalDataReg: CHAR_ARRAY_TYPE(0 to RESULT_BYTE_NUM-1) --same as dataResults
     
     --S5
     signal tempData: std_logic_vector(7 downto 0);
@@ -97,7 +99,7 @@ BEGIN
             IF rxNow='1' AND NOT(ovErr='1' OR framErr='1') THEN
                 dataReg <= rxData;                      -- Load in data. Comes in ASCII, we output in ASCII
                 rxDone <= '1';                          -- Can start recieving next bit
-                txData <= rxData;                       -- Prepare to output data
+                txData <= dataReg;                      -- Prepare to output data
                 txNow <= '1';                           -- Can transmit data
                 nextState <= S1;
             ELSE
@@ -119,9 +121,15 @@ BEGIN
                 nextState <= S0;
             ELSIF dataReg >= x"30" AND dataReg <= x"39" and commandValid = '1' THEN
                 -- 0-9 and A/a previously recived --
-                numWords_bcd(globalCount) <= std_logic_vector(unsigned(dataReg) - 48); -- loads 0-2 4bit BCD value
-                en_globalCount <= '1';                  -- enables up counter.
-                IF globalCount = 2 THEN
+                --(does std_logic_vector pick the right width)?
+              	IF globalCount = 0 THEN
+              	bcdReg(2) <= std_logic_vector(unsigned(dataReg) - 48);
+              	en_globalCount <= '1'; 		-- enables up counter.
+              	ELSIF globalCount = 1 THEN
+              	bcdReg(1) <= std_logic_vector(unsigned(dataReg) - 48);
+              	en_globalCount <= '1';
+              	ELSIF globalCount = 2 THEN
+              	bcdReg(0) <= std_logic_vector(unsigned(dataReg) - 48);
                     -- FULL COMMAND RECIEVED --
                     res_globalCount <= '1';             -- Reset counter, no longer needed
                     commandValid <= '0';                -- Need another a/A to continue
@@ -147,10 +155,10 @@ BEGIN
             IF dataReady = '0' THEN
                 nextState <= S3;
             ELSE
-                start <= '0';                           -- Stop data processor while we print recieved byte
+                start <= '0';                           -- Stop data processor while we print received byte
                 IF globalCount = 0 THEN
                     txData <= hexToAscii(byte(3 downto 0));    -- Loads up ascii hex for first 4 bits
-                ELSIF globalCount = 1 THEN
+                ELSIF globalCount = 1 THEN 
                     txData <= hexToAscii(byte(7 downto 4));    -- Loads up ascii hex for second 4 bits
                 ELSE
                     txData <= x"20";                     -- Loads up ascii space
@@ -170,7 +178,8 @@ BEGIN
                     nextState <= S3;                    -- Go to S3 to wait for next byte
                 ELSE
                     -- DATA FINISHED PROCESSING --
-                    --finalDataReg <= dataResults;
+                    finalDataReg <= dataResults; 
+                    bcdReg <= maxIndex; 	-- (do we get maxIndex from data proc at this stage??)
                     nextState <= S0;                    -- Go to S0 to wait for second command
                 END IF;
             END IF;
@@ -179,22 +188,40 @@ BEGIN
         -- Was horrifically complicated, so added extra state (S6)
             IF dataReg = x"50" or dataReg = x"70" THEN  -- P or p
                 IF globalCount = 0 THEN                 -- Loads peak value in tempData. Goes to S6 which prints it
-                    tempData <= dataResults(4);
+                    tempData <= finalDataReg(3); 
                     nextState <= S6;
                 ELSIF globalCount = 1 THEN
-                    txData <= maxIndex(threeCount);
+                    IF threeCount = 0 THEN
+                   	txData <= std_logic_vector(unsigned(bcdReg(2) + 48); --converts BCD value to ASCII 
                     en_threeCount <= '1';
-                    IF threeCount = 2 THEN
-                        secondPhaseDone <= '1';
+                    ELSIF threeCount = 1 THEN
+                    txData <= std_logic_vector(unsigned(bcdReg(1) + 48);				
+                    en_threeCount <= '1';
+                    ELSIF threeCount = 2 THEN
+                    txData <= std_logic_vector(unsigned(bcdReg(0) + 48);
+                    secondPhaseDone <= '1';
                     END IF;
                     nextState <= S7;
                 ELSE
                     nextState <= S0;                    -- error catching
                 END IF;
             ELSIF dataReg = x"4C" or dataReg = x"6C" THEN   -- L or l
-                tempData <= dataResults(globalCount);   -- Loads certain byte in tempData. Checks if phase done. Goes to S6.
-                IF globalCount = 6 THEN
+            	IF globalCount = 0 THEN
+                tempData <= finalDataReg(6);   -- Loads certain byte in tempData. Checks if phase done. Goes to S6.
+                ELSIF globalCount = 1 THEN
+                tempData <= finalDataReg(5);   -- From LSB (leftmost byte value)
+                ELSIF globalCount = 2 THEN
+                tempData <= finalDataReg(4);
+                ELSIF globalCount = 3 THEN
+                tempData <= finalDataReg(3);   -- Peak
+                ELSIF globalCount = 4 THEN
+                tempData <= finalDataReg(2);
+                ELSIF globalCount = 5 THEN
+                tempData <= finalDataReg(1);
+                ELSIF globalCount = 6 THEN
+                tempData <= finalDataReg(0);   -- To MSB (rightmost byte value)
                     secondPhaseDone <= '1';
+                ELSE null; -- avoid undefined states
                 END IF;
                 nextState <= S6;
             ELSE
@@ -240,10 +267,10 @@ BEGIN
     END IF;
 END PROCESS;
 
--- Combinational Output Logic
-combi_out: PROCESS(curState)
-BEGIN
-END PROCESS; -- combi_outputend Behavioral;
+-- Combinational Output Logic (all covered in next state logic above)
+--combi_out: PROCESS(curState)
+--BEGIN
+--END PROCESS; -- combi_outputend Behavioral;
 
 threeCounter: process(clk, res_threeCount)
 -- literally goes 0, 1, 2, 0, 1, 2 --
