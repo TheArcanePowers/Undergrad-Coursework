@@ -136,7 +136,7 @@ BEGIN
                     -- FULL COMMAND RECIEVED --
                     res_globalCount <= '1';             -- Reset counter, no longer needed
                     commandValid <= '0';                -- Need another a/A to continue
-                    
+                    start <= '1';                       -- Starts data processor
                     secondInputMode <= '1';             -- Internal Signal
                     nextState <= S3;
                 ELSE --is this needed?
