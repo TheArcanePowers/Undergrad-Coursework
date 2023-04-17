@@ -72,16 +72,16 @@ architecture Behavioral of cmdProc is
         variable eightBitAscii: std_logic_vector(7 downto 0);
     begin
         IF UNSIGNED(fourBitHex) >= 10 THEN
-            eightBitAscii := std_logic_vector( UNSIGNED(fourBitHex) + 55);
+            eightBitAscii := std_logic_vector(RESIZE(UNSIGNED(fourBitHex) + 55, 8));
         ELSE
-            eightBitAscii := std_logic_vector( UNSIGNED(fourBitHex) + 48);
+            eightBitAscii := std_logic_vector(RESIZE(UNSIGNED(fourBitHex) + 48, 8));
         END IF;
-    
+        return eightBitAscii;
     end function;
 BEGIN
 
 -- State Logic
-nextState_logic: process(curState, rxNow, txDone, secondInputMode, dataReady, seqDone, threeCount, secondPhaseDone)
+nextState_logic: process(curState, rxNow, txDone, dataReady, seqDone)
 BEGIN
     -- set default variables
     -- external signals
@@ -97,10 +97,12 @@ BEGIN
         WHEN S0 =>  -- AWAIT FOR INPUT
             en_globalCount <= '0'; -- FIND BETTER PLACE?
             IF rxNow='1' THEN -- AND NOT(ovErr='1' OR framErr='1') THEN
-                dataReg <= rxData;                      -- Load in data. Comes in ASCII, we output in ASCII
-                rxDone <= '1';                          -- Can start recieving next bit
-                txData <= dataReg;                      -- Prepare to output data
-                txNow <= '1';                           -- Can transmit data
+                dataReg <= rxData;                      -- Load in data. Comes in ASCII, we output in ASCII.
+                rxDone <= '1';                          -- Can start receiving next bit.
+                txData <= rxData;   -- dataReg does not get updated value from rxData until end of process so rxData is 
+                                    -- used for instant Echo transmission.
+                                    -- Prepare to output data.
+                txNow <= '1';                           -- Can transmit data.
                 nextState <= S1;
             ELSE
                 nextState <= S0;
@@ -121,7 +123,6 @@ BEGIN
                 nextState <= S0;
             ELSIF dataReg >= x"30" AND dataReg <= x"39" and commandValid = '1' THEN
                 -- 0-9 and A/a previously recived --
-                --(does std_logic_vector pick the right width)?
                 IF globalCount = 0 THEN
                     bcdReg(2) <= dataReg(3 downto 0);
                     en_globalCount <= '1'; 		-- enables up counter.
@@ -135,10 +136,10 @@ BEGIN
                     -- FULL COMMAND RECIEVED --
                     res_globalCount <= '1';             -- Reset counter, no longer needed
                     commandValid <= '0';                -- Need another a/A to continue
-                    start <= '1';                       -- Starts Data Processor
+                    
                     secondInputMode <= '1';             -- Internal Signal
                     nextState <= S3;
-                ELSE
+                ELSE --is this needed?
                     nextState <= S0;                    -- Await next input
                 END IF;
             ELSIF (dataReg = x"50" OR dataReg = x"70" OR dataReg = x"4C" or dataReg = x"6C") AND (secondInputMode = '1') THEN
@@ -154,7 +155,7 @@ BEGIN
             END IF;
             
         WHEN S3 =>  -- DATA PROCESSOR PHASE --
-            IF dataReady = '0' THEN
+            IF dataReady = '0' OR txDone = '0' THEN --wait for byte and wait for last N from aNNN command to echo
                 nextState <= S3;
             ELSE
                 start <= '0';                           -- Stop data processor while we print received byte
@@ -175,15 +176,15 @@ BEGIN
             IF txDone = '0' THEN
                 nextState <= S4;
             ELSE
-                IF seqDone = '0' THEN
+                --IF seqDone = '0' THEN -- seqDone is X in waveform so the simulation breaks here 
                     start <= '1';                       -- Resume data processor
                     nextState <= S3;                    -- Go to S3 to wait for next byte
-                ELSE
+                --ELSE
                     -- DATA FINISHED PROCESSING --
-                    finalDataReg <= dataResults; 
-                    bcdReg <= maxIndex; 	-- (do we get maxIndex from data proc at this stage??)
-                    nextState <= S0;                    -- Go to S0 to wait for second command
-                END IF;
+                    --finalDataReg <= dataResults; 
+                    --bcdReg <= maxIndex; 	-- (do we get maxIndex from data proc at this stage??)
+                    --nextState <= S0;                    -- Go to S0 to wait for second command
+                --END IF;
             END IF;
             
         WHEN S5 =>
@@ -194,13 +195,13 @@ BEGIN
                     nextState <= S6;
                 ELSIF globalCount = 1 THEN
                     IF threeCount = 0 THEN
-                   	txData <= std_logic_vector(unsigned(bcdReg(2)) + 48); --converts BCD value to ASCII 
+                   	txData <= "0011" & bcdReg(2); --converts BCD value to ASCII 
                     en_threeCount <= '1';
                     ELSIF threeCount = 1 THEN
-                    txData <= std_logic_vector(unsigned(bcdReg(1)) + 48);				
+                    txData <= "0011" & bcdReg(1);				
                     en_threeCount <= '1';
                     ELSIF threeCount = 2 THEN
-                    txData <= std_logic_vector(unsigned(bcdReg(0)) + 48);
+                    txData <= "0011" & bcdReg(0);
                     secondPhaseDone <= '1';
                     END IF;
                     nextState <= S7;
