@@ -123,15 +123,15 @@ BEGIN
                 -- 0-9 and A/a previously recived --
                 --(does std_logic_vector pick the right width)?
                 IF globalCount = 0 THEN
-                    bcdReg(2) <= std_logic_vector(unsigned(dataReg) - 48);
+                    bcdReg(2) <= dataReg(3 downto 0);
                     en_globalCount <= '1'; 		-- enables up counter.
                     nextState <= S0;
               	ELSIF globalCount = 1 THEN
-              	     bcdReg(1) <= std_logic_vector(unsigned(dataReg) - 48);
+              	     bcdReg(1) <= dataReg(3 downto 0);
               	     en_globalCount <= '1';
               	     nextState <= S0;
               	ELSIF globalCount = 2 THEN
-              	     bcdReg(0) <= std_logic_vector(unsigned(dataReg) - 48);
+              	     bcdReg(0) <= dataReg(3 downto 0);
                     -- FULL COMMAND RECIEVED --
                     res_globalCount <= '1';             -- Reset counter, no longer needed
                     commandValid <= '0';                -- Need another a/A to continue

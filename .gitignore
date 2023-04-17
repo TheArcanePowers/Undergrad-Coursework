@@ -84,3 +84,7 @@
 !*.elf
 !*.bmm
 !*.xmp
+##MANUAL
+*.mem
+*.c
+*.xpr
