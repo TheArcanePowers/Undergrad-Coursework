@@ -60,7 +60,7 @@ architecture Behavioral of cmdProc is
 	signal commandValid: bit;
     signal secondInputMode: bit;
     -- S4
-    signal finalDataReg: CHAR_ARRAY_TYPE(0 to RESULT_BYTE_NUM-1) --same as dataResults
+    signal finalDataReg: CHAR_ARRAY_TYPE(0 to RESULT_BYTE_NUM-1); --same as dataResults
     
     --S5
     signal tempData: std_logic_vector(7 downto 0);
@@ -192,13 +192,13 @@ BEGIN
                     nextState <= S6;
                 ELSIF globalCount = 1 THEN
                     IF threeCount = 0 THEN
-                   	txData <= std_logic_vector(unsigned(bcdReg(2) + 48); --converts BCD value to ASCII 
+                   	txData <= std_logic_vector(unsigned(bcdReg(2)) + 48); --converts BCD value to ASCII 
                     en_threeCount <= '1';
                     ELSIF threeCount = 1 THEN
-                    txData <= std_logic_vector(unsigned(bcdReg(1) + 48);				
+                    txData <= std_logic_vector(unsigned(bcdReg(1)) + 48);				
                     en_threeCount <= '1';
                     ELSIF threeCount = 2 THEN
-                    txData <= std_logic_vector(unsigned(bcdReg(0) + 48);
+                    txData <= std_logic_vector(unsigned(bcdReg(0)) + 48);
                     secondPhaseDone <= '1';
                     END IF;
                     nextState <= S7;
