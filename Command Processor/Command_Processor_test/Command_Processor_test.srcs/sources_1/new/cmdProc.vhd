@@ -61,7 +61,6 @@ architecture Behavioral of cmdProc is
     signal secondInputMode: bit;
     -- S4
     signal finalDataReg: CHAR_ARRAY_TYPE(0 to RESULT_BYTE_NUM-1); --same as dataResults
-    
     --S5
     signal tempData: std_logic_vector(7 downto 0);
     signal secondPhaseDone: bit;
@@ -82,7 +81,7 @@ architecture Behavioral of cmdProc is
 BEGIN
 
 -- State Logic
-nextState_logic: process(curState)
+nextState_logic: process(curState, rxNow, txDone, secondInputMode, dataReady, seqDone, threeCount, secondPhaseDone)
 BEGIN
     -- set default variables
     -- external signals
@@ -96,7 +95,8 @@ BEGIN
     --
     CASE curState IS
         WHEN S0 =>  -- AWAIT FOR INPUT
-            IF rxNow='1' AND NOT(ovErr='1' OR framErr='1') THEN
+            en_globalCount <= '0'; -- FIND BETTER PLACE?
+            IF rxNow='1' THEN -- AND NOT(ovErr='1' OR framErr='1') THEN
                 dataReg <= rxData;                      -- Load in data. Comes in ASCII, we output in ASCII
                 rxDone <= '1';                          -- Can start recieving next bit
                 txData <= dataReg;                      -- Prepare to output data
@@ -122,14 +122,16 @@ BEGIN
             ELSIF dataReg >= x"30" AND dataReg <= x"39" and commandValid = '1' THEN
                 -- 0-9 and A/a previously recived --
                 --(does std_logic_vector pick the right width)?
-              	IF globalCount = 0 THEN
-              	bcdReg(2) <= std_logic_vector(unsigned(dataReg) - 48);
-              	en_globalCount <= '1'; 		-- enables up counter.
+                IF globalCount = 0 THEN
+                    bcdReg(2) <= std_logic_vector(unsigned(dataReg) - 48);
+                    en_globalCount <= '1'; 		-- enables up counter.
+                    nextState <= S0;
               	ELSIF globalCount = 1 THEN
-              	bcdReg(1) <= std_logic_vector(unsigned(dataReg) - 48);
-              	en_globalCount <= '1';
+              	     bcdReg(1) <= std_logic_vector(unsigned(dataReg) - 48);
+              	     en_globalCount <= '1';
+              	     nextState <= S0;
               	ELSIF globalCount = 2 THEN
-              	bcdReg(0) <= std_logic_vector(unsigned(dataReg) - 48);
+              	     bcdReg(0) <= std_logic_vector(unsigned(dataReg) - 48);
                     -- FULL COMMAND RECIEVED --
                     res_globalCount <= '1';             -- Reset counter, no longer needed
                     commandValid <= '0';                -- Need another a/A to continue
@@ -261,6 +263,11 @@ BEGIN
     IF reset='1' THEN
       curState <= S0;
       -- All signals set to 0 --
+      --rxDone <= '0';
+      --txData <= (others => '0');
+      --txNow <= '0';
+      --numWords_bcd <= (others => '0');
+      --dataReg <= "00000000";
     ELSIF rising_edge(clk) THEN
         -- Could set all signals to default here as well--
         curState <= nextState;
