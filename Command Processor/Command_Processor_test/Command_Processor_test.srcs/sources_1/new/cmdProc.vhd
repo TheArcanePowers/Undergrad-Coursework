@@ -56,7 +56,7 @@ architecture Behavioral of cmdProc is
     -- S0 
     signal dataReg: std_logic_vector(7 downto 0);
 	-- S2
-    signal bcdReg: BCD_ARRAY_TYPE(2 downto 0); -- for numWords and maxIndex
+    signal bcdReg: BCD_ARRAY_TYPE(2 downto 0); -- for maxIndex (numWords can be asserted immediately as an output)
 	signal commandValid: bit;
     signal secondInputMode: bit;
     -- S3
