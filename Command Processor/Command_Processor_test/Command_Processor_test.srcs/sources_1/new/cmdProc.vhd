@@ -59,6 +59,8 @@ architecture Behavioral of cmdProc is
     signal bcdReg: BCD_ARRAY_TYPE(2 downto 0); -- for numWords and maxIndex
 	signal commandValid: bit;
     signal secondInputMode: bit;
+    -- S3
+    --signal byteDone: bit;
     -- S4
     signal finalDataReg: CHAR_ARRAY_TYPE(0 to RESULT_BYTE_NUM-1); --same as dataResults
     --S5
@@ -87,11 +89,14 @@ BEGIN
     -- external signals
     rxDone <= '0';
     txNow <= '0';
+    start <= '0'; -- FOR DATA PROCESSOR TO INITIALIZE. THEN TO ALWAYS TURN START OFF AFTER 1 CLK CYCLE
+    --txData <= (others => '0');
     -- internal signals
     en_globalCount <= '0';
     res_globalCount <= '0';
     en_threeCount <= '0';
     res_threeCount <= '0';
+    --dataReg <= "00000000";
     --
     CASE curState IS
         WHEN S0 =>  -- AWAIT FOR INPUT
@@ -124,16 +129,17 @@ BEGIN
             ELSIF dataReg >= x"30" AND dataReg <= x"39" and commandValid = '1' THEN
                 -- 0-9 and A/a previously recived --
                 IF globalCount = 0 THEN
-                    bcdReg(2) <= dataReg(3 downto 0);
+                    numWords_bcd(2) <= dataReg(3 downto 0);
                     en_globalCount <= '1'; 		-- enables up counter.
                     nextState <= S0;
               	ELSIF globalCount = 1 THEN
-              	     bcdReg(1) <= dataReg(3 downto 0);
+              	     numWords_bcd(1) <= dataReg(3 downto 0);
               	     en_globalCount <= '1';
               	     nextState <= S0;
               	ELSIF globalCount = 2 THEN
-              	     bcdReg(0) <= dataReg(3 downto 0);
+              	     numWords_bcd(0) <= dataReg(3 downto 0);
                     -- FULL COMMAND RECIEVED --
+                    --numWords_bcd <= bcdReg; -- initiates seqDone signal from Data Processor
                     res_globalCount <= '1';             -- Reset counter, no longer needed
                     commandValid <= '0';                -- Need another a/A to continue
                     start <= '1';                       -- Starts data processor
@@ -173,18 +179,18 @@ BEGIN
             END IF;
             
         WHEN S4 =>  -- AWAIT FOR TRANSMISSION --
-            IF txDone = '0' THEN
+            IF txDone = '0' XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
                 nextState <= S4;
             ELSE
-                --IF seqDone = '0' THEN -- seqDone is X in waveform so the simulation breaks here 
+                IF seqDone = '0' THEN  
                     start <= '1';                       -- Resume data processor
                     nextState <= S3;                    -- Go to S3 to wait for next byte
-                --ELSE
+                ELSE
                     -- DATA FINISHED PROCESSING --
-                    --finalDataReg <= dataResults; 
-                    --bcdReg <= maxIndex; 	-- (do we get maxIndex from data proc at this stage??)
-                    --nextState <= S0;                    -- Go to S0 to wait for second command
-                --END IF;
+                    finalDataReg <= dataResults; 
+                    bcdReg <= maxIndex; 	-- (do we get maxIndex from data proc at this stage??)
+                    nextState <= S0;                    -- Go to S0 to wait for second command
+                END IF;
             END IF;
             
         WHEN S5 =>
@@ -224,7 +230,7 @@ BEGIN
                 ELSIF globalCount = 6 THEN
                 tempData <= finalDataReg(0);   -- To LSB (rightmost byte value)
                     secondPhaseDone <= '1';
-                ELSE null; -- avoid undefined states
+                
                 END IF;
                 nextState <= S6;
             ELSE
@@ -263,12 +269,6 @@ State_register: process (reset, clk)
 BEGIN
     IF reset='1' THEN
       curState <= S0;
-      -- All signals set to 0 --
-      --rxDone <= '0';
-      --txData <= (others => '0');
-      --txNow <= '0';
-      --numWords_bcd <= (others => '0');
-      --dataReg <= "00000000";
     ELSIF rising_edge(clk) THEN
         -- Could set all signals to default here as well--
         curState <= nextState;
