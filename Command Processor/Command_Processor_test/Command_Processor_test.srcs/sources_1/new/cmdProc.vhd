@@ -46,7 +46,7 @@ end cmdProc;
 
 architecture Behavioral of cmdProc is
     -- SIGNAL DECLARATIONS
-    TYPE state_type IS (S0, S1, S2, S3, S4, S5, S6, S7);
+    TYPE state_type IS (S0, S1, S2, S3, S4, S5, S6, S7, S8);
     signal curState, nextState: state_type;
     --
     signal globalCount: integer;
@@ -74,9 +74,9 @@ architecture Behavioral of cmdProc is
         variable eightBitAscii: std_logic_vector(7 downto 0);
     begin
         IF UNSIGNED(fourBitHex) >= 10 THEN
-            eightBitAscii := std_logic_vector(RESIZE(UNSIGNED(fourBitHex) + 55, 8));
+            eightBitAscii := "0100" & std_logic_vector(unsigned(fourBitHex) - unsigned'("1001"));    --std_logic_vector(RESIZE(UNSIGNED(fourBitHex) + 55, 8));
         ELSE
-            eightBitAscii := std_logic_vector(RESIZE(UNSIGNED(fourBitHex) + 48, 8));
+            eightBitAscii := "0011" & fourBitHex;
         END IF;
         return eightBitAscii;
     end function;
@@ -145,7 +145,7 @@ BEGIN
                     start <= '1';                       -- Starts data processor
                     secondInputMode <= '1';             -- Internal Signal
                     nextState <= S3;
-                ELSE --is this needed?
+                ELSE --Needed to prevent latches. All IFs need an ELSE
                     nextState <= S0;                    -- Await next input
                 END IF;
             ELSIF (dataReg = x"50" OR dataReg = x"70" OR dataReg = x"4C" or dataReg = x"6C") AND (secondInputMode = '1') THEN
@@ -160,31 +160,38 @@ BEGIN
                 nextState <= S0;
             END IF;
             
-        WHEN S3 =>  -- DATA PROCESSOR PHASE --
-            IF dataReady = '0' OR txDone = '0' THEN --wait for byte and wait for last N from aNNN command to echo
+        WHEN S3 =>  -- WAIT FOR DATA --
+            IF dataReady = '0' OR txDone = '0' THEN     --wait for byte and wait for last N from aNNN command to echo
                 nextState <= S3;
             ELSE
-                start <= '0';                           -- Stop data processor while we print received byte
-                IF globalCount = 0 THEN
-                    txData <= hexToAscii(byte(3 downto 0));    -- Loads up ascii hex for first 4 bits
-                ELSIF globalCount = 1 THEN 
-                    txData <= hexToAscii(byte(7 downto 4));    -- Loads up ascii hex for second 4 bits
-                ELSE
-                    txData <= x"20";                     -- Loads up ascii space
-                    res_globalCount <= '1';              -- Resets counter so we can do hex print and space again
-                END IF;
-                en_globalCount <= '1';                  -- Increment counter
-                txNow <= '1';                           -- Start transmitting
                 nextState <= S4;
-            END IF;
-            
-        WHEN S4 =>  -- AWAIT FOR TRANSMISSION --
-            IF txDone = '0' XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
-                nextState <= S4;
+        END IF;
+        
+        WHEN S4 =>  -- DATA PROCESSOR PHASE --
+            start <= '0';                           -- Stop data processor while we print received byte
+            IF globalCount = 0 THEN
+                txData <= hexToAscii(byte(7 downto 4));    -- Loads up ascii hex for first 4 bits
+            ELSIF globalCount = 1 THEN 
+                txData <= hexToAscii(byte(3 downto 0));    -- Loads up ascii hex for second 4 bits
             ELSE
-                IF seqDone = '0' THEN  
-                    start <= '1';                       -- Resume data processor
-                    nextState <= S3;                    -- Go to S3 to wait for next byte
+                txData <= x"20";                     -- Loads up ascii space
+                res_globalCount <= '1';              -- Resets counter so we can do hex print and space again
+            END IF;
+            en_globalCount <= '1';                  -- Increment counter
+            txNow <= '1';                           -- Start transmitting
+            nextState <= S5;
+            
+        WHEN S5 =>  -- AWAIT FOR TRANSMISSION --
+            IF txDone = '0' XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
+                nextState <= S5;
+            ELSE
+                IF seqDone = '0' THEN
+                    IF globalCount = 2 THEN 
+                        start <= '1';                       -- Resume data processor
+                    ELSE
+                        start <= '0';
+                    END IF;
+                    nextState <= S4;                    -- Go to S3 to wait for next byte
                 ELSE
                     -- DATA FINISHED PROCESSING --
                     finalDataReg <= dataResults; 
@@ -193,51 +200,50 @@ BEGIN
                 END IF;
             END IF;
             
-        WHEN S5 =>
+        WHEN S6 =>
         -- Was horrifically complicated, so added extra state (S6)
             IF dataReg = x"50" or dataReg = x"70" THEN  -- P or p
                 IF globalCount = 0 THEN                 -- Loads peak value in tempData. Goes to S6 which prints it
                     tempData <= finalDataReg(3); 
-                    nextState <= S6;
+                    nextState <= S7;
                 ELSIF globalCount = 1 THEN
                     IF threeCount = 0 THEN
-                   	txData <= "0011" & bcdReg(2); --converts BCD value to ASCII 
-                    en_threeCount <= '1';
+                   	    txData <= "0011" & bcdReg(2); --converts BCD value to ASCII 
+                        en_threeCount <= '1';
                     ELSIF threeCount = 1 THEN
-                    txData <= "0011" & bcdReg(1);				
-                    en_threeCount <= '1';
+                        txData <= "0011" & bcdReg(1);				
+                        en_threeCount <= '1';
                     ELSIF threeCount = 2 THEN
-                    txData <= "0011" & bcdReg(0);
-                    secondPhaseDone <= '1';
+                        txData <= "0011" & bcdReg(0);
+                        secondPhaseDone <= '1';
                     END IF;
-                    nextState <= S7;
+                    nextState <= S8;
                 ELSE
                     nextState <= S0;                    -- error catching
                 END IF;
             ELSIF dataReg = x"4C" or dataReg = x"6C" THEN   -- L or l
             	IF globalCount = 0 THEN
-                tempData <= finalDataReg(6);   -- Loads certain byte in tempData. Checks if phase done. Goes to S6.
+                    tempData <= finalDataReg(6);   -- Loads certain byte in tempData. Checks if phase done. Goes to S6.
                 ELSIF globalCount = 1 THEN
-                tempData <= finalDataReg(5);   -- From MSB (leftmost byte value)
+                    tempData <= finalDataReg(5);   -- From MSB (leftmost byte value)
                 ELSIF globalCount = 2 THEN
-                tempData <= finalDataReg(4);
+                    tempData <= finalDataReg(4);
                 ELSIF globalCount = 3 THEN
-                tempData <= finalDataReg(3);   -- Peak
+                    tempData <= finalDataReg(3);   -- Peak
                 ELSIF globalCount = 4 THEN
-                tempData <= finalDataReg(2);
+                    tempData <= finalDataReg(2);
                 ELSIF globalCount = 5 THEN
-                tempData <= finalDataReg(1);
+                    tempData <= finalDataReg(1);
                 ELSIF globalCount = 6 THEN
-                tempData <= finalDataReg(0);   -- To LSB (rightmost byte value)
+                    tempData <= finalDataReg(0);   -- To LSB (rightmost byte value)
                     secondPhaseDone <= '1';
-                
                 END IF;
-                nextState <= S6;
+                nextState <= S7;
             ELSE
                 nextState <= S0;                        -- error catching
             END IF;          
             
-        WHEN S6 =>
+        WHEN S7 =>
             IF threeCount = 0 THEN
                 txData <= hexToAscii(tempData(3 downto 0));
             ELSIF threeCount = 1 THEN
@@ -247,17 +253,17 @@ BEGIN
                 txData <= x"20";
                 en_globalCount <= '1';
             END IF;
-            nextState <= S7;
+            nextState <= S8;
             
-        WHEN S7 =>
+        WHEN S8 =>
             IF txDone = '0' THEN
-                nextState <= S6;
+                nextState <= S7;
             ELSE
                 IF secondPhaseDone = '1' THEN
                     nextState <= S0;
                     res_globalCount <= '1';
                 ELSE
-                    nextState <= S5;
+                    nextState <= S6;
                 END IF;
             END IF;
             

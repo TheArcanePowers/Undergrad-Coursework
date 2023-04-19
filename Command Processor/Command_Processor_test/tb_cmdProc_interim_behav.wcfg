@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000000000 ms"></ZoomStartTime>
-      <ZoomEndTime time="10.001000001 ms"></ZoomEndTime>
-      <Cursor1Time time="5.658671750 ms"></Cursor1Time>
+      <ZoomStartTime time="23.946331666 ms"></ZoomStartTime>
+      <ZoomEndTime time="52.602251667 ms"></ZoomEndTime>
+      <Cursor1Time time="47.826265000 ms"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="200"></NameColumnWidth>
-      <ValueColumnWidth column_width="90"></ValueColumnWidth>
+      <ValueColumnWidth column_width="85"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="28" />
    <wvobject fp_name="/tb_cmdProc_interim/cmdProc1/curState" type="other">
@@ -49,6 +49,7 @@
    <wvobject fp_name="/tb_cmdProc_interim/cmdProc1/txData" type="array">
       <obj_property name="ElementShortName">txData[7:0]</obj_property>
       <obj_property name="ObjectShortName">txData[7:0]</obj_property>
+      <obj_property name="Radix">ASCIIRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_cmdProc_interim/cmdProc1/txDone" type="logic">
       <obj_property name="ElementShortName">txDone</obj_property>
