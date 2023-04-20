@@ -161,10 +161,10 @@ BEGIN
             END IF;
             
         WHEN S3 =>  -- WAIT FOR DATA --
-            IF dataReady = '0' OR txDone = '0' THEN     --wait for byte and wait for last N from aNNN command to echo
-                nextState <= S3;
-            ELSE
+            IF dataReady = '1' AND txDone = '1' THEN     --wait for transmission complete AND data ready
                 nextState <= S4;
+            ELSE
+                nextState <= S3;
         END IF;
         
         WHEN S4 =>  -- DATA PROCESSOR PHASE --
@@ -286,8 +286,9 @@ END PROCESS;
 --BEGIN
 --END PROCESS; -- combi_outputend Behavioral;
 
-threeCounter: process(clk, res_threeCount)
+threeCounter: process(clk)
 -- literally goes 0, 1, 2, 0, 1, 2 --
+-- purposefully fully synchronous - we get logic errors if not --
 BEGIN
     IF res_threeCount = '1' THEN
         threeCount <= 0;
