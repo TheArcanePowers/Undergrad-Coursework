@@ -237,8 +237,8 @@ begin
   -- issue print results cmd P
   ------------------------ 
   -- P: 0, 0000_1010, 1 (start bit - 0, P (0101_0000) in order of LSB first, stop bit -1)
-  '0' after 100001 us, '0' after 100105 us, '0' after 100209 us,  '0' after 100313 us,  '0' after 100417 us,  
-  '1' after 100521 us,  '0' after 100625 us,  '1' after 100729 us,  '0' after 100833 us, '1' after 100937 us;
+  '0' after 80001 us, '0' after 80105 us, '0' after 80209 us,  '0' after 80313 us,  '0' after 80417 us,  
+  '1' after 80521 us,  '0' after 80625 us,  '1' after 80729 us,  '0' after 80833 us, '1' after 80937 us;
   
   
   dataGen1: dataGen

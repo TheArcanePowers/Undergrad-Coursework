@@ -113,7 +113,7 @@ BEGIN
                 nextState <= S0;
             END IF;
         
-        WHEN S1 =>  -- AWAIT FOR SUCCESSFULL ECHO
+        WHEN S1 =>  -- AWAIT FOR SUCCESSFULL ECHO -- COMBINE WITH S2
             IF txDone='1' THEN
                 nextState <= S2;
             ELSE
@@ -152,23 +152,28 @@ BEGIN
                 -- P/p/L/l and Full Command previously recieved -- 
                 res_globalCount <= '1';
                 res_threeCount <= '1';
-                nextState <= S5;
+                nextState <= S6;
             ELSE
                 -- assume interrupts semi-valid sequence. Must reset everything --
                 res_globalCount <= '1';
                 commandValid <= '0';
                 nextState <= S0;
             END IF;
+        
+        -- TODO: ADD NEWLINE
             
         WHEN S3 =>  -- WAIT FOR DATA --
+            start <= '0';   -- start is only one clock cycle
             IF dataReady = '1' AND txDone = '1' THEN     --wait for transmission complete AND data ready
                 nextState <= S4;
             ELSE
                 nextState <= S3;
         END IF;
         
+        -- TODO: WE'RE NOT PRINTING THE LAST BYTE
+        
         WHEN S4 =>  -- DATA PROCESSOR PHASE --
-            start <= '0';                           -- Stop data processor while we print received byte
+            --start <= '0';                           -- Stop data processor while we print received byte
             IF globalCount = 0 THEN
                 txData <= hexToAscii(byte(7 downto 4));    -- Loads up ascii hex for first 4 bits
             ELSIF globalCount = 1 THEN 
@@ -222,20 +227,8 @@ BEGIN
                     nextState <= S0;                    -- error catching
                 END IF;
             ELSIF dataReg = x"4C" or dataReg = x"6C" THEN   -- L or l
-            	IF globalCount = 0 THEN
-                    tempData <= finalDataReg(6);   -- Loads certain byte in tempData. Checks if phase done. Goes to S6.
-                ELSIF globalCount = 1 THEN
-                    tempData <= finalDataReg(5);   -- From MSB (leftmost byte value)
-                ELSIF globalCount = 2 THEN
-                    tempData <= finalDataReg(4);
-                ELSIF globalCount = 3 THEN
-                    tempData <= finalDataReg(3);   -- Peak
-                ELSIF globalCount = 4 THEN
-                    tempData <= finalDataReg(2);
-                ELSIF globalCount = 5 THEN
-                    tempData <= finalDataReg(1);
-                ELSIF globalCount = 6 THEN
-                    tempData <= finalDataReg(0);   -- To LSB (rightmost byte value)
+                tempData <= finalDataReg(globalCount);
+                IF globalCount = 6 THEN
                     secondPhaseDone <= '1';
                 END IF;
                 nextState <= S7;
@@ -245,21 +238,23 @@ BEGIN
             
         WHEN S7 =>
             IF threeCount = 0 THEN
-                txData <= hexToAscii(tempData(3 downto 0));
-            ELSIF threeCount = 1 THEN
                 txData <= hexToAscii(tempData(7 downto 4));
+            ELSIF threeCount = 1 THEN
+                txData <= hexToAscii(tempData(3 downto 0));
             ELSE
             -- When threeCounter reaches 2, it's finished its cycle and can move onto next byte of dataResult.
                 txData <= x"20";
                 en_globalCount <= '1';
             END IF;
+            txNow <= '1';
+            en_threeCount <= '1';
             nextState <= S8;
             
         WHEN S8 =>
             IF txDone = '0' THEN
-                nextState <= S7;
+                nextState <= S8;
             ELSE
-                IF secondPhaseDone = '1' THEN
+                IF secondPhaseDone = '1' AND threeCount = 2 THEN
                     nextState <= S0;
                     res_globalCount <= '1';
                 ELSE
@@ -285,6 +280,11 @@ END PROCESS;
 --combi_out: PROCESS(curState)
 --BEGIN
 --END PROCESS; -- combi_outputend Behavioral;
+
+-- TODO: CHANGE EVERYTHING INTO COMBINATIONAL OUTPUT
+-- TODO: COMBINE STATE S2 & S3 because nothing calls specifically to S2
+-- TODO: Get test-bench working with L/P
+-- TODO: CONFIRM DATA DOES 12 BYTES AND NOT ELEVEN?
 
 threeCounter: process(clk)
 -- literally goes 0, 1, 2, 0, 1, 2 --
