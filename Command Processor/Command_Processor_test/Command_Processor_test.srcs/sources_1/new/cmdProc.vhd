@@ -303,7 +303,7 @@ BEGIN
     END IF;
 END PROCESS;
 
-globalCounter: process(clk, res_globalCount)
+globalCounter: process(clk) -- can be fully synchronous too
 -- Added check for reset just to be sure that if reset and enable are both on, reset takes priority.
 BEGIN
     IF res_globalCount = '1' THEN
