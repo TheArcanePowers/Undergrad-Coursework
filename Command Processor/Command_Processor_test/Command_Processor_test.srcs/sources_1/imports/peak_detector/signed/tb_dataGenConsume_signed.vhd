@@ -2,8 +2,10 @@
 --	tb_dataGenConsume.vhd -- A testbench that simulates the full system.
 ----------------------------------------------------------------------------
 -- Author:  Dinesh Pamunuwa
+-- Modified: Leonardo Coppi
 ----------------------------------------------------------------------------
---
+-- 21/04/23 - Modified timings to bring them sooner, removed second A013
+-- command. Now everything really does fit within 160ms
 ----------------------------------------------------------------------------
 -- This testbench instantiates all the components. It includes synthesised 
 -- versions of the Command Processor and the Data Processor as structural 
@@ -214,29 +216,29 @@ begin
   -- issue second read cmd A013
   ------------------------
   -- A: 1, 01000010, 1 (idle - 1, start bit - 0, A (0100_0001) in order of LSB first, stop bit -1)
-  '1' after 132000 us, '0' after 132001 us, '1' after 132105 us, '0' after 132209 us,  '0' after 132313 us,  '0' after 132417 us,  
-  '0' after 132521 us,  '0' after 132625 us,  '1' after 132729 us,  '0' after 132833 us, '1' after 132937 us, 
+  --'1' after 132000 us, '0' after 132001 us, '1' after 132105 us, '0' after 132209 us,  '0' after 132313 us,  '0' after 132417 us,  
+  --'0' after 132521 us,  '0' after 132625 us,  '1' after 132729 us,  '0' after 132833 us, '1' after 132937 us, 
   -- 0: 0, 00001100, 1 (start bit - 0, decimal 0 (0011_0000) in order of LSB first, stop bit -1)
-  '0' after 133200 us, '0' after 133304 us, '0' after 133408 us, '0' after 133512 us,  '0' after 133616 us,  
-  '1' after 133720 us, '1' after 133824 us,  '0' after 133928 us,  '0' after 134032 us,  '1' after 134136 us, 
+  --'0' after 133200 us, '0' after 133304 us, '0' after 133408 us, '0' after 133512 us,  '0' after 133616 us,  
+  --'1' after 133720 us, '1' after 133824 us,  '0' after 133928 us,  '0' after 134032 us,  '1' after 134136 us, 
   -- 1: 0, 10001100, 1 (start bit - 0, decimal 0 (0011_0001) in order of LSB first, stop bit -1)
-  '0' after 134500 us, '1' after 134604 us, '0' after 134708 us, '0' after 134812 us, '0' after 134916 us,
-  '1' after 135020 us,  '1' after 135124 us,  '0' after 135228 us,  '0' after 135332 us,  '1' after 135436 us,  
+  --'0' after 134500 us, '1' after 134604 us, '0' after 134708 us, '0' after 134812 us, '0' after 134916 us,
+  --'1' after 135020 us,  '1' after 135124 us,  '0' after 135228 us,  '0' after 135332 us,  '1' after 135436 us,  
   -- 3: 0, 11001100, 1 (start bit - 0, decimal 2 (0011_0011) in order of LSB first, stop bit -1)
-  '0' after 135800 us, '1' after 135904 us, '1' after 136008 us, '0' after 136112 us, '0' after 136216 us, 
-  '1' after 136320 us, '1' after 136424 us, '0' after 136528 us, '0' after 136632 us, '1' after 136736 us,
+  --'0' after 135800 us, '1' after 135904 us, '1' after 136008 us, '0' after 136112 us, '0' after 136216 us, 
+  --'1' after 136320 us, '1' after 136424 us, '0' after 136528 us, '0' after 136632 us, '1' after 136736 us,
   ------------------------
   -- issue print results cmd L
   ------------------------ 
   -- L: 0, 0011_0010, 1 (start bit - 0, A (0100_1100) in order of LSB first, stop bit -1)
-  '0' after 190001 us, '0' after 190105 us, '0' after 190209 us,  '1' after 190313 us,  '1' after 190417 us,  
-  '0' after 190521 us,  '0' after 190625 us,  '1' after 190729 us,  '0' after 190833 us, '1' after 190937 us,
+  '0' after 45000 us, '0' after 45105 us, '0' after 45209 us,  '1' after 45313 us,  '1' after 45417 us,  
+  '0' after 45521 us,  '0' after 45625 us,  '1' after 45729 us,  '0' after 45833 us, '1' after 45937 us,
   ------------------------
   -- issue print results cmd P
   ------------------------ 
   -- P: 0, 0000_1010, 1 (start bit - 0, P (0101_0000) in order of LSB first, stop bit -1)
-  '0' after 236001 us, '0' after 236105 us, '0' after 236209 us,  '0' after 236313 us,  '0' after 236417 us,  
-  '1' after 236521 us,  '0' after 236625 us,  '1' after 236729 us,  '0' after 236833 us, '1' after 236937 us;
+  '0' after 100001 us, '0' after 100105 us, '0' after 100209 us,  '0' after 100313 us,  '0' after 100417 us,  
+  '1' after 100521 us,  '0' after 100625 us,  '1' after 100729 us,  '0' after 100833 us, '1' after 100937 us;
   
   
   dataGen1: dataGen
