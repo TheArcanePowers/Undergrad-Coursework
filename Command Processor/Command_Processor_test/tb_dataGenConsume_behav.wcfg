@@ -12,14 +12,18 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0.000000000 ms"></ZoomStartTime>
-      <ZoomEndTime time="130.001000001 ms"></ZoomEndTime>
-      <Cursor1Time time="130.001000000 ms"></Cursor1Time>
+      <ZoomEndTime time="132.377910001 ms"></ZoomEndTime>
+      <Cursor1Time time="95.030725284 ms"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="200"></NameColumnWidth>
-      <ValueColumnWidth column_width="75"></ValueColumnWidth>
+      <NameColumnWidth column_width="198"></NameColumnWidth>
+      <ValueColumnWidth column_width="72"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="30" />
+   <WVObjectSize size="29" />
+   <wvobject fp_name="/tb_dataGenConsume/sig_rx" type="logic">
+      <obj_property name="ElementShortName">sig_rx</obj_property>
+      <obj_property name="ObjectShortName">sig_rx</obj_property>
+   </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/rxNow" type="logic">
       <obj_property name="ElementShortName">rxNow</obj_property>
       <obj_property name="ObjectShortName">rxNow</obj_property>
@@ -32,14 +36,6 @@
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/rxDone" type="logic">
       <obj_property name="ElementShortName">rxDone</obj_property>
       <obj_property name="ObjectShortName">rxDone</obj_property>
-   </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/ovErr" type="logic">
-      <obj_property name="ElementShortName">ovErr</obj_property>
-      <obj_property name="ObjectShortName">ovErr</obj_property>
-   </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/framErr" type="logic">
-      <obj_property name="ElementShortName">framErr</obj_property>
-      <obj_property name="ObjectShortName">framErr</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/txData" type="array">
       <obj_property name="ElementShortName">txData[7:0]</obj_property>
@@ -77,6 +73,10 @@
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/dataResults" type="array">
       <obj_property name="ElementShortName">dataResults[0:6][7:0]</obj_property>
       <obj_property name="ObjectShortName">dataResults[0:6][7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/finalDataReg" type="array">
+      <obj_property name="ElementShortName">finalDataReg[0:6][7:0]</obj_property>
+      <obj_property name="ObjectShortName">finalDataReg[0:6][7:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/seqDone" type="logic">
       <obj_property name="ElementShortName">seqDone</obj_property>
@@ -117,10 +117,7 @@
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/dataReg" type="array">
       <obj_property name="ElementShortName">dataReg[7:0]</obj_property>
       <obj_property name="ObjectShortName">dataReg[7:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/bcdReg" type="array">
-      <obj_property name="ElementShortName">bcdReg[2:0][3:0]</obj_property>
-      <obj_property name="ObjectShortName">bcdReg[2:0][3:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/commandValid" type="logic">
       <obj_property name="ElementShortName">commandValid</obj_property>
@@ -130,9 +127,9 @@
       <obj_property name="ElementShortName">secondInputMode</obj_property>
       <obj_property name="ObjectShortName">secondInputMode</obj_property>
    </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/finalDataReg" type="array">
-      <obj_property name="ElementShortName">finalDataReg[0:6][7:0]</obj_property>
-      <obj_property name="ObjectShortName">finalDataReg[0:6][7:0]</obj_property>
+   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/bcdReg" type="array">
+      <obj_property name="ElementShortName">bcdReg[2:0][3:0]</obj_property>
+      <obj_property name="ObjectShortName">bcdReg[2:0][3:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/tempData" type="array">
       <obj_property name="ElementShortName">tempData[7:0]</obj_property>

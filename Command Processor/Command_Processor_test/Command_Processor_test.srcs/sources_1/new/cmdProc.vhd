@@ -141,9 +141,10 @@ BEGIN
                     -- FULL COMMAND RECIEVED --
                     --numWords_bcd <= bcdReg; -- initiates seqDone signal from Data Processor
                     res_globalCount <= '1';             -- Reset counter, no longer needed
+                    res_threeCount <= '1';
                     commandValid <= '0';                -- Need another a/A to continue
                     start <= '1';                       -- Starts data processor
-                    secondInputMode <= '1';             -- Internal Signal
+                    --secondInputMode <= '1';             -- Internal Signal
                     nextState <= S3;
                 ELSE --Needed to prevent latches. All IFs need an ELSE
                     nextState <= S0;                    -- Await next input
@@ -165,6 +166,7 @@ BEGIN
         WHEN S3 =>  -- WAIT FOR DATA --
             start <= '0';   -- start is only one clock cycle
             IF dataReady = '1' AND txDone = '1' THEN     --wait for transmission complete AND data ready
+                --res_threeCount <= '1';
                 nextState <= S4;
             ELSE
                 nextState <= S3;
@@ -172,38 +174,52 @@ BEGIN
         
         -- TODO: WE'RE NOT PRINTING THE LAST BYTE
         
-        WHEN S4 =>  -- DATA PROCESSOR PHASE --
-            --start <= '0';                           -- Stop data processor while we print received byte
-            IF globalCount = 0 THEN
+        WHEN S4 =>  -- Load Bits for Printing--
+            --start <= '0';                                 -- Stop data processor while we print received byte
+            IF threeCount = 0 THEN
                 txData <= hexToAscii(byte(7 downto 4));    -- Loads up ascii hex for first 4 bits
-            ELSIF globalCount = 1 THEN 
+            ELSIF threeCount = 1 THEN 
                 txData <= hexToAscii(byte(3 downto 0));    -- Loads up ascii hex for second 4 bits
             ELSE
                 txData <= x"20";                     -- Loads up ascii space
-                res_globalCount <= '1';              -- Resets counter so we can do hex print and space again
+                --res_globalCount <= '1';              -- Resets counter so we can do hex print and space again
             END IF;
-            en_globalCount <= '1';                  -- Increment counter
+            en_threeCount <= '1';                  -- Increment counter
             txNow <= '1';                           -- Start transmitting
             nextState <= S5;
             
         WHEN S5 =>  -- AWAIT FOR TRANSMISSION --
-            IF txDone = '0' XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
+            IF txDone = '0' THEN --XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
                 nextState <= S5;
             ELSE
-                IF seqDone = '0' THEN
-                    IF globalCount = 2 THEN 
-                        start <= '1';                       -- Resume data processor
-                    ELSE
-                        start <= '0';
-                    END IF;
-                    nextState <= S4;                    -- Go to S3 to wait for next byte
+            -- if seqDone, we're on the last byte
+            -- When we return here with secondInputMode and globalCount = 2, were completely finished. S0
+            -- INIT: S3 waited for data ready
+            -- S3 -> S4(load b0) -> S5(print b0) -> S4(load b1) -> S5(p b1) -> S4(lb2) -> S5(pb2) -> S3 ...
+            -- S5 (pb2) seqDone!, S
+            -- seqDone = 0, globalCount = 0/1 - S4 -> S5 -> S4 -> S5
+            -- seqDone = 0, globalCount = 2 ->
+                IF secondInputMode = '1' and threeCount = 2 THEN
+                    -- Skip everything, we've just outputted last space.
+                    res_threeCount <= '1';
+                    nextState <= S0;
                 ELSE
-                    -- DATA FINISHED PROCESSING --
-                    finalDataReg <= dataResults; 
-                    bcdReg <= maxIndex; 	-- (do we get maxIndex from data proc at this stage??)
-                    nextState <= S0;                    -- Go to S0 to wait for second command
+                    IF seqDone = '1' THEN
+                        secondInputMode <= '1'; -- tells us it's the last run
+                        finalDataReg <= dataResults;    -- Load registers
+                        bcdReg <= maxIndex;             -- Load registers
+                    END IF;
+                    IF threeCount = 2 THEN
+                        -- might need to change to only happen if seqdone != 1
+                        start <= '1';
+                        nextState <= S3;    -- await next byte
+                    ELSE
+                        start <= '0';       -- Redundant?
+                        nextState <= S4;    -- Proceed with next transmission
+                    END IF;
                 END IF;
             END IF;
+
             
         WHEN S6 =>
         -- Was horrifically complicated, so added extra state (S6)
@@ -283,7 +299,6 @@ END PROCESS;
 
 -- TODO: CHANGE EVERYTHING INTO COMBINATIONAL OUTPUT
 -- TODO: COMBINE STATE S2 & S3 because nothing calls specifically to S2
--- TODO: Get test-bench working with L/P
 -- TODO: CONFIRM DATA DOES 12 BYTES AND NOT ELEVEN?
 
 threeCounter: process(clk)
