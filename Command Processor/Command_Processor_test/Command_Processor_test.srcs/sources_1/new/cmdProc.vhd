@@ -54,7 +54,7 @@ architecture Behavioral of cmdProc is
     signal threeCount: integer;
     signal en_threeCount, res_threeCount: bit;
     -- S0 
-    signal dataReg: std_logic_vector(7 downto 0);
+    --signal dataReg: std_logic_vector(7 downto 0);
 	-- S2
     signal bcdReg: BCD_ARRAY_TYPE(2 downto 0); -- for maxIndex (numWords can be asserted immediately as an output)
 	signal commandValid: bit;
@@ -64,7 +64,6 @@ architecture Behavioral of cmdProc is
     -- S4
     signal finalDataReg: CHAR_ARRAY_TYPE(0 to RESULT_BYTE_NUM-1); --same as dataResults
     --S5
-    signal tempData: std_logic_vector(7 downto 0);
     signal secondPhaseDone: bit;
     --signal secondChar: bit;
     --signal rxNow_reg, txDone_reg: std_logic;
@@ -88,7 +87,6 @@ BEGIN
 -- 1. Can remove dataReg
 -- 2. hexToAscii has stopped working!!!
 -- 3. ight be able to get rid of finalwordbcd if i don't have the last start on the last start run
--- 4. get rid of tempData. Removes a register and makes synthesis clearer
 -- 5. Add newlines when triggering S3 and S6
 
 -- State Logic
@@ -110,14 +108,14 @@ BEGIN
             END IF;
         
         WHEN S2 =>  -- AWAIT FOR SUCCESSFULL ECHO -- COMBINE WITH S2
-            IF dataReg >= x"30" AND dataReg <= x"39" and commandValid = '1' THEN
+            IF rxData >= x"30" AND rxData <= x"39" and commandValid = '1' THEN
                 IF globalCount = 2 THEN
                 -- 3 numbers and A/a previously recived. Full Command ---
                     nextState <= S3;
                 ELSE
                     nextState <= S0;
                 END IF;
-            ELSIF (dataReg = x"50" OR dataReg = x"70" OR dataReg = x"4C" or dataReg = x"6C") AND (secondInputMode = '1') THEN
+            ELSIF (rxData = x"50" OR rxData = x"70" OR rxData = x"4C" or rxData = x"6C") AND (secondInputMode = '1') THEN
                 -- P/p/L/l and First Command previously recieved -- 
                 nextState <= S6;
             ELSE
@@ -155,9 +153,9 @@ BEGIN
             END IF;
             
         WHEN S6 =>
-            IF dataReg = x"50" or dataReg = x"70" THEN  -- P or p
+            IF rxData = x"50" or rxData = x"70" THEN  -- P or p
                 nextState <= S7;
-            ELSIF dataReg = x"4C" or dataReg = x"6C" THEN   -- L or l
+            ELSIF rxData = x"4C" or rxData = x"6C" THEN   -- L or l
                 nextState <= S7;
             ELSE
                 nextState <= S0;                        -- error catching
@@ -210,24 +208,24 @@ BEGIN
             en_globalCount <= '0'; -- FIND BETTER PLACE?
             secondPhaseDone <= '0';
             IF rxNow='1' THEN -- AND NOT(ovErr='1' OR framErr='1') THEN
-                dataReg <= rxData;                      -- Load in data. Comes in ASCII, we output in ASCII.
+                --dataReg <= rxData;                      -- Load in data. Comes in ASCII, we output in ASCII.
                 rxDone <= '1';                          -- Can start receiving next bit.
                 txData <= rxData;   -- dataReg does not get updated value from rxData until end of process so rxData is used for instant Echo transmission.
                 txNow <= '1';                           -- Can transmit data.
             END IF;
                     
         WHEN S2 =>
-            IF dataReg = x"41" OR dataReg = x"61" THEN  -- VALID A --
+            IF rxData = x"41" OR rxData = x"61" THEN  -- VALID A --
                 commandValid <= '1';                        -- Recived A/a. Number register now valid
                 res_globalCount <= '1';                     -- Resets counter
-            ELSIF dataReg >= x"30" AND dataReg <= x"39" and commandValid = '1' THEN -- 0-9 and A/a previously recived --
+            ELSIF rxData >= x"30" AND rxData <= x"39" and commandValid = '1' THEN -- 0-9 and A/a previously recived --
                 en_globalCount <= '1';
                 IF globalCount = 0 THEN
-                    numWords_bcd(2) <= dataReg(3 downto 0);
+                    numWords_bcd(2) <= rxData(3 downto 0);
                 ELSIF globalCount = 1 THEN
-                     numWords_bcd(1) <= dataReg(3 downto 0);
+                     numWords_bcd(1) <= rxData(3 downto 0);
                 ELSIF globalCount = 2 THEN  -- FULL COMMAND RECIEVED --
-                     numWords_bcd(0) <= dataReg(3 downto 0);
+                     numWords_bcd(0) <= rxData(3 downto 0);
                     --numWords_bcd <= bcdReg; -- initiates seqDone signal from Data Processor
                     res_globalCount <= '1';             -- Reset counter, no longer needed
                     res_threeCount <= '1';
@@ -236,7 +234,7 @@ BEGIN
                 ELSE
                     res_globalCount <= '0';
                 END IF;
-            ELSIF (dataReg = x"50" OR dataReg = x"70" OR dataReg = x"4C" or dataReg = x"6C") AND (secondInputMode = '1') THEN
+            ELSIF (rxData = x"50" OR rxData = x"70" OR rxData = x"4C" or rxData = x"6C") AND (secondInputMode = '1') THEN
                 -- P/p/L/l and Full Command previously recieved -- 
                 res_globalCount <= '1';
                 res_threeCount <= '1';
@@ -277,13 +275,12 @@ BEGIN
 
             
         WHEN S6 =>
-            IF dataReg = x"50" or dataReg = x"70" THEN  -- P or p
+            IF rxData = x"50" or rxData = x"70" THEN  -- P or p
                 IF globalCount = 0 THEN -- Prints Peak BYTE IN HEX FORMAT
                     IF threeCount = 0 THEN
-                        tempData <= finalDataReg(3);    -- Loads peak value in tempData. Goes to S7 which prints it
                         txData <= hexToAscii(finalDataReg(3)(7 downto 4));
                     ELSIF threeCount = 1 THEN
-                        txData <= hexToAscii(tempData(3 downto 0));
+                        txData <= hexToAscii(finalDataReg(3)(3 downto 0));
                     ELSE
                         txData <= x"20";
                         en_globalCount <= '1';
@@ -301,12 +298,11 @@ BEGIN
                 END IF;
                 txNow <= '1';
                 --en_threeCount <= '1';
-            ELSIF dataReg = x"4C" or dataReg = x"6C" THEN   -- L or l
-                tempData <= finalDataReg(globalCount);
+            ELSIF rxData = x"4C" or rxData = x"6C" THEN   -- L or l
                 IF threeCount = 0 THEN
                     txData <= hexToAscii(finalDataReg(globalCount)(7 downto 4));
                 ELSIF threeCount = 1 THEN
-                    txData <= hexToAscii(tempData(3 downto 0));
+                    txData <= hexToAscii(finalDataReg(globalCount)(3 downto 0));
                 ELSE
                 -- When threeCounter reaches 2, it's finished its cycle and can move onto next byte of dataResult.
                     txData <= x"20";
