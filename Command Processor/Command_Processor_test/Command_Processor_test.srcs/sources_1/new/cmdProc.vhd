@@ -48,7 +48,7 @@ architecture Behavioral of cmdProc is
     -- SIGNAL DECLARATIONS
     TYPE state_type IS (S0, S1, S2, S3, S4, S5, S6, S7, S8);
     signal curState, nextState: state_type;
-    --
+    -- Counters
     signal globalCount: integer;
     signal en_globalCount, res_globalCount: bit;
     signal threeCount: integer;
@@ -67,7 +67,7 @@ architecture Behavioral of cmdProc is
     signal tempData: std_logic_vector(7 downto 0);
     signal secondPhaseDone: bit;
     --signal secondChar: bit;
-    signal rxNow_reg, txDone_reg: std_logic;
+    --signal rxNow_reg, txDone_reg: std_logic;
     --signal rxData_reg: std_logic_vector (7 downto 0);
     
     --signal comReg_count: integer;
@@ -78,18 +78,25 @@ architecture Behavioral of cmdProc is
         IF UNSIGNED(fourBitHex) >= 10 THEN
             eightBitAscii := "0100" & std_logic_vector(unsigned(fourBitHex) - unsigned'("1001"));    --std_logic_vector(RESIZE(UNSIGNED(fourBitHex) + 55, 8));
         ELSE
-            eightBitAscii := "0011" & fourBitHex;
+            eightBitAscii := "0011" & std_logic_vector(fourBitHex);
         END IF;
         return eightBitAscii;
     end function;
 BEGIN
 
+-- TODO TO IMPROVE--
+-- 1. Can remove dataReg
+-- 2. hexToAscii has stopped working!!!
+-- 3. ight be able to get rid of finalwordbcd if i don't have the last start on the last start run
+-- 4. get rid of tempData. Removes a register and makes synthesis clearer
+-- 5. Add newlines when triggering S3 and S6
+
 -- State Logic
-nextState_logic: process(curState, rxNow_reg, txDone, dataReady, seqDone)
+nextState_logic: process(curState, rxNow, txDone, dataReady, seqDone)
 BEGIN
     CASE curState IS
         WHEN S0 =>  -- AWAIT FOR INPUT
-            IF rxNow_reg='1' THEN -- AND NOT(ovErr='1' OR framErr='1') THEN
+            IF rxNow='1' THEN -- AND NOT(ovErr='1' OR framErr='1') THEN
                 nextState <= S1;
             ELSE
                 nextState <= S0;
@@ -148,25 +155,15 @@ BEGIN
             END IF;
             
         WHEN S6 =>
-        -- Was horrifically complicated, so added extra state (S6)
             IF dataReg = x"50" or dataReg = x"70" THEN  -- P or p
-                IF globalCount = 0 THEN                 -- Loads peak value in tempData. Goes to S6 which prints it
-                    nextState <= S7;
-                ELSIF globalCount = 1 THEN
-                    nextState <= S8;
-                ELSE
-                    nextState <= S0;                    -- error catching
-                END IF;
+                nextState <= S7;
             ELSIF dataReg = x"4C" or dataReg = x"6C" THEN   -- L or l
                 nextState <= S7;
             ELSE
                 nextState <= S0;                        -- error catching
             END IF;          
             
-        WHEN S7 => -- Another information loading state -- TODO: COULD BE REMOVED?
-            nextState <= S8;
-            
-        WHEN S8 =>
+        WHEN S7 =>
             IF txDone = '1' THEN
                 IF secondPhaseDone = '1' AND threeCount = 2 THEN
                     nextState <= S0;
@@ -174,7 +171,7 @@ BEGIN
                     nextState <= S6;
                 END IF;
             ELSE
-                nextState <= S8;    -- loop
+                nextState <= S7;    -- loop
             END IF;
             
         WHEN OTHERS =>
@@ -189,15 +186,13 @@ BEGIN
       curState <= S0;
     ELSIF rising_edge(clk) THEN
         -- Could set all signals to default here as well--
-        rxNow_reg   <= rxNow;
-        --rxData_reg  <= rxData;
-        --txDone_reg  <= txDone;
+        --rxNow_reg   <= rxNow;
         curState <= nextState;
     END IF;
 END PROCESS;
 
 -- Combinational Output Logic (all covered in next state logic above)
-combi_out: PROCESS(curState, rxNow_reg, txDone, seqDone)
+combi_out: PROCESS(curState, rxNow, txDone, seqDone)
 BEGIN
     -- set default variables
     -- external signals
@@ -213,7 +208,8 @@ BEGIN
     CASE curState IS
         WHEN S0 =>  -- AWAIT FOR INPUT
             en_globalCount <= '0'; -- FIND BETTER PLACE?
-            IF rxNow_reg='1' THEN -- AND NOT(ovErr='1' OR framErr='1') THEN
+            secondPhaseDone <= '0';
+            IF rxNow='1' THEN -- AND NOT(ovErr='1' OR framErr='1') THEN
                 dataReg <= rxData;                      -- Load in data. Comes in ASCII, we output in ASCII.
                 rxDone <= '1';                          -- Can start receiving next bit.
                 txData <= rxData;   -- dataReg does not get updated value from rxData until end of process so rxData is used for instant Echo transmission.
@@ -281,45 +277,54 @@ BEGIN
 
             
         WHEN S6 =>
-        -- Was horrifically complicated, so added extra state
             IF dataReg = x"50" or dataReg = x"70" THEN  -- P or p
-                IF globalCount = 0 THEN                 -- Loads peak value in tempData. Goes to S6 which prints it
-                    tempData <= finalDataReg(3); 
-                ELSIF globalCount = 1 THEN
+                IF globalCount = 0 THEN -- Prints Peak BYTE IN HEX FORMAT
+                    IF threeCount = 0 THEN
+                        tempData <= finalDataReg(3);    -- Loads peak value in tempData. Goes to S7 which prints it
+                        txData <= hexToAscii(finalDataReg(3)(7 downto 4));
+                    ELSIF threeCount = 1 THEN
+                        txData <= hexToAscii(tempData(3 downto 0));
+                    ELSE
+                        txData <= x"20";
+                        en_globalCount <= '1';
+                    END IF;
+                ELSIF globalCount = 1 THEN -- PRINTS BYTE INDEX IN ASCII FORMAT
                     IF threeCount = 0 THEN
                    	    txData <= "0011" & bcdReg(2); --converts BCD value to ASCII 
-                        en_threeCount <= '1';
                     ELSIF threeCount = 1 THEN
                         txData <= "0011" & bcdReg(1);				
-                        en_threeCount <= '1';
                     ELSIF threeCount = 2 THEN
                         txData <= "0011" & bcdReg(0);
                         secondPhaseDone <= '1';
+                        --res_threeCount <= '1';
                     END IF;
                 END IF;
+                txNow <= '1';
+                --en_threeCount <= '1';
             ELSIF dataReg = x"4C" or dataReg = x"6C" THEN   -- L or l
                 tempData <= finalDataReg(globalCount);
+                IF threeCount = 0 THEN
+                    txData <= hexToAscii(finalDataReg(globalCount)(7 downto 4));
+                ELSIF threeCount = 1 THEN
+                    txData <= hexToAscii(tempData(3 downto 0));
+                ELSE
+                -- When threeCounter reaches 2, it's finished its cycle and can move onto next byte of dataResult.
+                    txData <= x"20";
+                    en_globalCount <= '1';
+                END IF;
+                txNow <= '1';
+                --en_threeCount <= '1';
                 IF globalCount = 6 THEN
                     secondPhaseDone <= '1';
                 END IF;
-            END IF;          
+            END IF;
             
         WHEN S7 =>
-            IF threeCount = 0 THEN
-                txData <= hexToAscii(tempData(7 downto 4));
-            ELSIF threeCount = 1 THEN
-                txData <= hexToAscii(tempData(3 downto 0));
-            ELSE
-            -- When threeCounter reaches 2, it's finished its cycle and can move onto next byte of dataResult.
-                txData <= x"20";
-                en_globalCount <= '1';
-            END IF;
-            txNow <= '1';
-            en_threeCount <= '1';
-            
-        WHEN S8 =>
-            IF txDone = '1' AND secondPhaseDone = '1' AND threeCount = 2 THEN
-                res_globalCount <= '1';
+            IF txDone = '1' THEN
+                en_threeCount <= '1';
+                IF secondPhaseDone = '1' AND threeCount = 2 THEN
+                    res_globalCount <= '1';
+                END IF;
             END IF;
             
         WHEN OTHERS =>
