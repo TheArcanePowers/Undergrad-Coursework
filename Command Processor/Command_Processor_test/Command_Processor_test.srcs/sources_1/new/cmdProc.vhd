@@ -67,6 +67,8 @@ architecture Behavioral of cmdProc is
     signal tempData: std_logic_vector(7 downto 0);
     signal secondPhaseDone: bit;
     --signal secondChar: bit;
+    signal rxNow_reg, txDone_reg: std_logic;
+    --signal rxData_reg: std_logic_vector (7 downto 0);
     
     --signal comReg_count: integer;
     --
@@ -83,126 +85,187 @@ architecture Behavioral of cmdProc is
 BEGIN
 
 -- State Logic
-nextState_logic: process(curState, rxNow, txDone, dataReady, seqDone)
+nextState_logic: process(curState, rxNow_reg, txDone, dataReady, seqDone)
+BEGIN
+    CASE curState IS
+        WHEN S0 =>  -- AWAIT FOR INPUT
+            IF rxNow_reg='1' THEN -- AND NOT(ovErr='1' OR framErr='1') THEN
+                nextState <= S1;
+            ELSE
+                nextState <= S0;
+            END IF;
+        
+        WHEN S1 =>
+            IF txDone = '1' THEN
+                nextState <= S2;
+            ELSE
+                nextState <= S1;
+            END IF;
+        
+        WHEN S2 =>  -- AWAIT FOR SUCCESSFULL ECHO -- COMBINE WITH S2
+            IF dataReg >= x"30" AND dataReg <= x"39" and commandValid = '1' THEN
+                IF globalCount = 2 THEN
+                -- 3 numbers and A/a previously recived. Full Command ---
+                    nextState <= S3;
+                ELSE
+                    nextState <= S0;
+                END IF;
+            ELSIF (dataReg = x"50" OR dataReg = x"70" OR dataReg = x"4C" or dataReg = x"6C") AND (secondInputMode = '1') THEN
+                -- P/p/L/l and First Command previously recieved -- 
+                nextState <= S6;
+            ELSE
+                -- incorrect sequence or need more inputs --
+                nextState <= S0;
+            END IF;
+        
+        -- TODO: ADD NEWLINE
+            
+        WHEN S3 =>  -- WAIT FOR DataReady from Data Processor --
+            IF dataReady = '1' AND txDone = '1' THEN     --wait for transmission complete AND data ready
+                nextState <= S4;
+            ELSE
+                nextState <= S3;    -- Loops
+        END IF;
+                
+        WHEN S4 =>  -- Load Bits for Printing-- TODO: CAN THIS BE REMOVED??
+            nextState <= S5;
+            
+        WHEN S5 =>  -- AWAIT FOR TRANSMISSION --
+            IF txDone = '1' THEN --XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
+                IF secondInputMode = '1' and threeCount = 2 THEN
+                    -- Skip everything, we've just outputted last space.
+                    nextState <= S0;
+                ELSE
+                    IF threeCount = 2 THEN
+                        nextState <= S3;    -- await next byte
+                    ELSE
+                        nextState <= S4;    -- Proceed with next transmission in 'queue'
+                        -- Theoretically could put bit loading here surely? And first transmission being a new line
+                    END IF;
+                END IF;
+            ELSE
+                nextState <= S5;    -- loop
+            END IF;
+            
+        WHEN S6 =>
+        -- Was horrifically complicated, so added extra state (S6)
+            IF dataReg = x"50" or dataReg = x"70" THEN  -- P or p
+                IF globalCount = 0 THEN                 -- Loads peak value in tempData. Goes to S6 which prints it
+                    nextState <= S7;
+                ELSIF globalCount = 1 THEN
+                    nextState <= S8;
+                ELSE
+                    nextState <= S0;                    -- error catching
+                END IF;
+            ELSIF dataReg = x"4C" or dataReg = x"6C" THEN   -- L or l
+                nextState <= S7;
+            ELSE
+                nextState <= S0;                        -- error catching
+            END IF;          
+            
+        WHEN S7 => -- Another information loading state -- TODO: COULD BE REMOVED?
+            nextState <= S8;
+            
+        WHEN S8 =>
+            IF txDone = '1' THEN
+                IF secondPhaseDone = '1' AND threeCount = 2 THEN
+                    nextState <= S0;
+                ELSE
+                    nextState <= S6;
+                END IF;
+            ELSE
+                nextState <= S8;    -- loop
+            END IF;
+            
+        WHEN OTHERS =>
+            nextState <= S0;
+    END CASE;
+END PROCESS;
+
+-- State Register
+State_register: process (reset, clk)
+BEGIN
+    IF reset='1' THEN
+      curState <= S0;
+    ELSIF rising_edge(clk) THEN
+        -- Could set all signals to default here as well--
+        rxNow_reg   <= rxNow;
+        --rxData_reg  <= rxData;
+        --txDone_reg  <= txDone;
+        curState <= nextState;
+    END IF;
+END PROCESS;
+
+-- Combinational Output Logic (all covered in next state logic above)
+combi_out: PROCESS(curState, rxNow_reg, txDone, seqDone)
 BEGIN
     -- set default variables
     -- external signals
     rxDone <= '0';
     txNow <= '0';
     start <= '0'; -- FOR DATA PROCESSOR TO INITIALIZE. THEN TO ALWAYS TURN START OFF AFTER 1 CLK CYCLE
-    --txData <= (others => '0');
     -- internal signals
     en_globalCount <= '0';
     res_globalCount <= '0';
     en_threeCount <= '0';
     res_threeCount <= '0';
-    --dataReg <= "00000000";
     --
     CASE curState IS
         WHEN S0 =>  -- AWAIT FOR INPUT
             en_globalCount <= '0'; -- FIND BETTER PLACE?
-            IF rxNow='1' THEN -- AND NOT(ovErr='1' OR framErr='1') THEN
+            IF rxNow_reg='1' THEN -- AND NOT(ovErr='1' OR framErr='1') THEN
                 dataReg <= rxData;                      -- Load in data. Comes in ASCII, we output in ASCII.
                 rxDone <= '1';                          -- Can start receiving next bit.
-                txData <= rxData;   -- dataReg does not get updated value from rxData until end of process so rxData is 
-                                    -- used for instant Echo transmission.
-                                    -- Prepare to output data.
+                txData <= rxData;   -- dataReg does not get updated value from rxData until end of process so rxData is used for instant Echo transmission.
                 txNow <= '1';                           -- Can transmit data.
-                nextState <= S1;
-            ELSE
-                nextState <= S0;
             END IF;
-        
-        WHEN S1 =>  -- AWAIT FOR SUCCESSFULL ECHO -- COMBINE WITH S2
-            IF txDone='1' THEN
-                nextState <= S2;
-            ELSE
-                nextState <= S1;
-            END IF;
-        
-        WHEN S2 => -- INPUT PARSER
-            IF dataReg = x"41" OR dataReg = x"61" THEN
-                -- VALID A --
-                commandValid <= '1';                    -- Recived A/a. Number register now valid
-                res_globalCount <= '1';                 -- Resets counter
-                nextState <= S0;
-            ELSIF dataReg >= x"30" AND dataReg <= x"39" and commandValid = '1' THEN
-                -- 0-9 and A/a previously recived --
+                    
+        WHEN S2 =>
+            IF dataReg = x"41" OR dataReg = x"61" THEN  -- VALID A --
+                commandValid <= '1';                        -- Recived A/a. Number register now valid
+                res_globalCount <= '1';                     -- Resets counter
+            ELSIF dataReg >= x"30" AND dataReg <= x"39" and commandValid = '1' THEN -- 0-9 and A/a previously recived --
+                en_globalCount <= '1';
                 IF globalCount = 0 THEN
                     numWords_bcd(2) <= dataReg(3 downto 0);
-                    en_globalCount <= '1'; 		-- enables up counter.
-                    nextState <= S0;
-              	ELSIF globalCount = 1 THEN
-              	     numWords_bcd(1) <= dataReg(3 downto 0);
-              	     en_globalCount <= '1';
-              	     nextState <= S0;
-              	ELSIF globalCount = 2 THEN
-              	     numWords_bcd(0) <= dataReg(3 downto 0);
-                    -- FULL COMMAND RECIEVED --
+                ELSIF globalCount = 1 THEN
+                     numWords_bcd(1) <= dataReg(3 downto 0);
+                ELSIF globalCount = 2 THEN  -- FULL COMMAND RECIEVED --
+                     numWords_bcd(0) <= dataReg(3 downto 0);
                     --numWords_bcd <= bcdReg; -- initiates seqDone signal from Data Processor
                     res_globalCount <= '1';             -- Reset counter, no longer needed
                     res_threeCount <= '1';
                     commandValid <= '0';                -- Need another a/A to continue
                     start <= '1';                       -- Starts data processor
-                    --secondInputMode <= '1';             -- Internal Signal
-                    nextState <= S3;
-                ELSE --Needed to prevent latches. All IFs need an ELSE
-                    nextState <= S0;                    -- Await next input
+                ELSE
+                    res_globalCount <= '0';
                 END IF;
             ELSIF (dataReg = x"50" OR dataReg = x"70" OR dataReg = x"4C" or dataReg = x"6C") AND (secondInputMode = '1') THEN
                 -- P/p/L/l and Full Command previously recieved -- 
                 res_globalCount <= '1';
                 res_threeCount <= '1';
-                nextState <= S6;
             ELSE
                 -- assume interrupts semi-valid sequence. Must reset everything --
                 res_globalCount <= '1';
                 commandValid <= '0';
-                nextState <= S0;
             END IF;
-        
-        -- TODO: ADD NEWLINE
-            
-        WHEN S3 =>  -- WAIT FOR DATA --
-            start <= '0';   -- start is only one clock cycle
-            IF dataReady = '1' AND txDone = '1' THEN     --wait for transmission complete AND data ready
-                --res_threeCount <= '1';
-                nextState <= S4;
-            ELSE
-                nextState <= S3;
-        END IF;
-        
-        -- TODO: WE'RE NOT PRINTING THE LAST BYTE
-        
+                
         WHEN S4 =>  -- Load Bits for Printing--
-            --start <= '0';                                 -- Stop data processor while we print received byte
             IF threeCount = 0 THEN
                 txData <= hexToAscii(byte(7 downto 4));    -- Loads up ascii hex for first 4 bits
             ELSIF threeCount = 1 THEN 
                 txData <= hexToAscii(byte(3 downto 0));    -- Loads up ascii hex for second 4 bits
             ELSE
                 txData <= x"20";                     -- Loads up ascii space
-                --res_globalCount <= '1';              -- Resets counter so we can do hex print and space again
             END IF;
             en_threeCount <= '1';                  -- Increment counter
             txNow <= '1';                           -- Start transmitting
-            nextState <= S5;
             
         WHEN S5 =>  -- AWAIT FOR TRANSMISSION --
-            IF txDone = '0' THEN --XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
-                nextState <= S5;
-            ELSE
-            -- if seqDone, we're on the last byte
-            -- When we return here with secondInputMode and globalCount = 2, were completely finished. S0
-            -- INIT: S3 waited for data ready
-            -- S3 -> S4(load b0) -> S5(print b0) -> S4(load b1) -> S5(p b1) -> S4(lb2) -> S5(pb2) -> S3 ...
-            -- S5 (pb2) seqDone!, S
-            -- seqDone = 0, globalCount = 0/1 - S4 -> S5 -> S4 -> S5
-            -- seqDone = 0, globalCount = 2 ->
+            IF txDone = '1' THEN --XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
                 IF secondInputMode = '1' and threeCount = 2 THEN
                     -- Skip everything, we've just outputted last space.
                     res_threeCount <= '1';
-                    nextState <= S0;
                 ELSE
                     IF seqDone = '1' THEN
                         secondInputMode <= '1'; -- tells us it's the last run
@@ -212,21 +275,16 @@ BEGIN
                     IF threeCount = 2 THEN
                         -- might need to change to only happen if seqdone != 1
                         start <= '1';
-                        nextState <= S3;    -- await next byte
-                    ELSE
-                        start <= '0';       -- Redundant?
-                        nextState <= S4;    -- Proceed with next transmission
                     END IF;
                 END IF;
             END IF;
 
             
         WHEN S6 =>
-        -- Was horrifically complicated, so added extra state (S6)
+        -- Was horrifically complicated, so added extra state
             IF dataReg = x"50" or dataReg = x"70" THEN  -- P or p
                 IF globalCount = 0 THEN                 -- Loads peak value in tempData. Goes to S6 which prints it
                     tempData <= finalDataReg(3); 
-                    nextState <= S7;
                 ELSIF globalCount = 1 THEN
                     IF threeCount = 0 THEN
                    	    txData <= "0011" & bcdReg(2); --converts BCD value to ASCII 
@@ -238,18 +296,12 @@ BEGIN
                         txData <= "0011" & bcdReg(0);
                         secondPhaseDone <= '1';
                     END IF;
-                    nextState <= S8;
-                ELSE
-                    nextState <= S0;                    -- error catching
                 END IF;
             ELSIF dataReg = x"4C" or dataReg = x"6C" THEN   -- L or l
                 tempData <= finalDataReg(globalCount);
                 IF globalCount = 6 THEN
                     secondPhaseDone <= '1';
                 END IF;
-                nextState <= S7;
-            ELSE
-                nextState <= S0;                        -- error catching
             END IF;          
             
         WHEN S7 =>
@@ -264,42 +316,28 @@ BEGIN
             END IF;
             txNow <= '1';
             en_threeCount <= '1';
-            nextState <= S8;
             
         WHEN S8 =>
-            IF txDone = '0' THEN
-                nextState <= S8;
-            ELSE
-                IF secondPhaseDone = '1' AND threeCount = 2 THEN
-                    nextState <= S0;
-                    res_globalCount <= '1';
-                ELSE
-                    nextState <= S6;
-                END IF;
+            IF txDone = '1' AND secondPhaseDone = '1' AND threeCount = 2 THEN
+                res_globalCount <= '1';
             END IF;
             
+        WHEN OTHERS =>
+            -- THIS IS WRONG. MAKE SURE TO FIX
+            rxDone <= '0';
+            txNow <= '0';
+            start <= '0'; -- FOR DATA PROCESSOR TO INITIALIZE. THEN TO ALWAYS TURN START OFF AFTER 1 CLK CYCLE
+            -- internal signals
+            en_globalCount <= '0';
+            res_globalCount <= '0';
+            en_threeCount <= '0';
+            res_threeCount <= '0';
+            
     END CASE;
-END PROCESS;
+END PROCESS; -- combi_outputend Behavioral;
 
--- State Register
-State_register: process (reset, clk)
-BEGIN
-    IF reset='1' THEN
-      curState <= S0;
-    ELSIF rising_edge(clk) THEN
-        -- Could set all signals to default here as well--
-        curState <= nextState;
-    END IF;
-END PROCESS;
-
--- Combinational Output Logic (all covered in next state logic above)
---combi_out: PROCESS(curState)
---BEGIN
---END PROCESS; -- combi_outputend Behavioral;
-
--- TODO: CHANGE EVERYTHING INTO COMBINATIONAL OUTPUT
 -- TODO: COMBINE STATE S2 & S3 because nothing calls specifically to S2
--- TODO: CONFIRM DATA DOES 12 BYTES AND NOT ELEVEN?
+-- TODO: Optimize states?
 
 threeCounter: process(clk)
 -- literally goes 0, 1, 2, 0, 1, 2 --
