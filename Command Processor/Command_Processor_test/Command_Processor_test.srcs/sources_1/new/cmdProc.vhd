@@ -45,31 +45,21 @@ entity cmdProc is
 end cmdProc;
 
 architecture Behavioral of cmdProc is
-    -- SIGNAL DECLARATIONS
-    TYPE state_type IS (S0, S1, S2, S3, S4, S5, S6, S7, S8);
+    --- SIGNAL DECLARATIONS
+    TYPE state_type IS (S0, S1, S2, S3, S4, S5, S6, S7);
     signal curState, nextState: state_type;
     -- Counters
     signal globalCount: integer;
-    signal en_globalCount, res_globalCount: bit;
+    signal en_globalCount, res_globalCount: std_logic;
     signal threeCount: integer;
-    signal en_threeCount, res_threeCount: bit;
-    -- S0 
-    --signal dataReg: std_logic_vector(7 downto 0);
+    signal en_threeCount, res_threeCount: std_logic;
 	-- S2
     signal bcdReg: BCD_ARRAY_TYPE(2 downto 0); -- for maxIndex (numWords can be asserted immediately as an output)
-	signal commandValid: bit;
-    signal secondInputMode: bit;
-    -- S3
-    --signal byteDone: bit;
+	signal secondPhase: std_logic;
     -- S4
     signal finalDataReg: CHAR_ARRAY_TYPE(0 to RESULT_BYTE_NUM-1); --same as dataResults
     --S5
-    signal secondPhaseDone: bit;
-    --signal secondChar: bit;
-    --signal rxNow_reg, txDone_reg: std_logic;
-    --signal rxData_reg: std_logic_vector (7 downto 0);
-    
-    --signal comReg_count: integer;
+    signal secondPhaseDone: std_logic;
     --
     function hexToAscii(fourBitHex: std_logic_vector(3 downto 0)) return std_logic_vector is
         variable eightBitAscii: std_logic_vector(7 downto 0);
@@ -84,10 +74,9 @@ architecture Behavioral of cmdProc is
 BEGIN
 
 -- TODO TO IMPROVE--
--- 1. Can remove dataReg
--- 2. hexToAscii has stopped working!!!
 -- 3. ight be able to get rid of finalwordbcd if i don't have the last start on the last start run
 -- 5. Add newlines when triggering S3 and S6
+-- 6. Combine commandValid and secondPhaseDone
 
 -- State Logic
 nextState_logic: process(curState, rxNow, txDone, dataReady, seqDone)
@@ -108,14 +97,14 @@ BEGIN
             END IF;
         
         WHEN S2 =>  -- AWAIT FOR SUCCESSFULL ECHO -- COMBINE WITH S2
-            IF rxData >= x"30" AND rxData <= x"39" and commandValid = '1' THEN
+            IF rxData >= x"30" AND rxData <= x"39" and secondPhase = '1' THEN
                 IF globalCount = 2 THEN
                 -- 3 numbers and A/a previously recived. Full Command ---
                     nextState <= S3;
                 ELSE
                     nextState <= S0;
                 END IF;
-            ELSIF (rxData = x"50" OR rxData = x"70" OR rxData = x"4C" or rxData = x"6C") AND (secondInputMode = '1') THEN
+            ELSIF (rxData = x"50" OR rxData = x"70" OR rxData = x"4C" or rxData = x"6C") AND (secondPhase = '1') THEN
                 -- P/p/L/l and First Command previously recieved -- 
                 nextState <= S6;
             ELSE
@@ -137,7 +126,7 @@ BEGIN
             
         WHEN S5 =>  -- AWAIT FOR TRANSMISSION --
             IF txDone = '1' THEN --XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
-                IF secondInputMode = '1' and threeCount = 2 THEN
+                IF secondPhase = '1' and threeCount = 2 THEN
                     -- Skip everything, we've just outputted last space.
                     nextState <= S0;
                 ELSE
@@ -216,9 +205,9 @@ BEGIN
                     
         WHEN S2 =>
             IF rxData = x"41" OR rxData = x"61" THEN  -- VALID A --
-                commandValid <= '1';                        -- Recived A/a. Number register now valid
+                secondPhase <= '1';                        -- Recived A/a. Number register now valid
                 res_globalCount <= '1';                     -- Resets counter
-            ELSIF rxData >= x"30" AND rxData <= x"39" and commandValid = '1' THEN -- 0-9 and A/a previously recived --
+            ELSIF rxData >= x"30" AND rxData <= x"39" and secondPhase = '1' THEN -- 0-9 and A/a previously recived --
                 en_globalCount <= '1';
                 IF globalCount = 0 THEN
                     numWords_bcd(2) <= rxData(3 downto 0);
@@ -229,19 +218,19 @@ BEGIN
                     --numWords_bcd <= bcdReg; -- initiates seqDone signal from Data Processor
                     res_globalCount <= '1';             -- Reset counter, no longer needed
                     res_threeCount <= '1';
-                    commandValid <= '0';                -- Need another a/A to continue
+                    secondPhase <= '0';                -- Need another a/A to continue
                     start <= '1';                       -- Starts data processor
                 ELSE
                     res_globalCount <= '0';
                 END IF;
-            ELSIF (rxData = x"50" OR rxData = x"70" OR rxData = x"4C" or rxData = x"6C") AND (secondInputMode = '1') THEN
+            ELSIF (rxData = x"50" OR rxData = x"70" OR rxData = x"4C" or rxData = x"6C") AND (secondPhase = '1') THEN
                 -- P/p/L/l and Full Command previously recieved -- 
                 res_globalCount <= '1';
                 res_threeCount <= '1';
             ELSE
                 -- assume interrupts semi-valid sequence. Must reset everything --
                 res_globalCount <= '1';
-                commandValid <= '0';
+                secondPhase <= '0';
             END IF;
                 
         WHEN S4 =>  -- Load Bits for Printing--
@@ -257,12 +246,12 @@ BEGIN
             
         WHEN S5 =>  -- AWAIT FOR TRANSMISSION --
             IF txDone = '1' THEN --XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
-                IF secondInputMode = '1' and threeCount = 2 THEN
+                IF secondPhase = '1' and threeCount = 2 THEN
                     -- Skip everything, we've just outputted last space.
                     res_threeCount <= '1';
                 ELSE
                     IF seqDone = '1' THEN
-                        secondInputMode <= '1'; -- tells us it's the last run
+                        secondPhase <= '1'; -- tells us it's the last run
                         finalDataReg <= dataResults;    -- Load registers
                         bcdReg <= maxIndex;             -- Load registers
                     END IF;
