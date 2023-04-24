@@ -87,7 +87,46 @@ void task2_dtmfGenerate(char* keys)
 		/* TODO 4. Complete the DTMF algorithm to generate audio signal based on the digits */
 		/* ========================= */
 
-		/* buffer[..] = ... */
+		/* get frequencies from digit */
+		int freq1, freq2;
+
+		if (digit == 'A' || digit == 'B' || digit == 'C' || digit == 'D') {
+			freq2 = 1633;
+		} else if (digit == '3' || digit == '6' || digit == '9' || digit == '#') {
+			freq2 = 1477;
+		} else if (digit == '2' || digit == '5' || digit == '8' || digit == '0') {
+			freq2 = 1336;
+		} else if (digit == '1' || digit == '4' || digit == '7' || digit == '*') {
+			freq2 = 1209;
+		}
+
+		if (digit == '1' || digit == '2' || digit == '3' || digit == 'A') {
+			freq1 = 697;
+		} else if (digit == '4' || digit == '5' || digit == '6' || digit == 'B') {
+			freq1 = 770;
+		} else if (digit == '7' || digit == '8' || digit == '9' || digit == 'C') {
+			freq1 = 852;
+		} else if (digit == '*' || digit == '0' || digit == '#' || digit == 'D') {
+			freq1 = 941;
+		}
+
+		/*printf("Freq1: %d Freq 2: %d \n", freq1, freq2);*/
+
+		/* produce sin waves with frequencies */
+		float output;
+
+        for (i = 0; i < samples_per_tone; i++) {
+        	/* (float) has to be added because i and fs are both ints */
+            float low_freq = sin(2*PI*freq1*((float) i/fs));
+            float high_freq = sin(2*PI *freq2*((float) i/fs));
+
+            /* without the 0.5x multiplier, sound corrupts... maybe it's peaking?*/
+            output = (short) 0.5*32768*(low_freq + high_freq);
+
+		/*Put it in buffer*/
+            buffer[(samples_per_tone*n) + i] = output;
+        }
+
 		/* ========================= */
 	}
 

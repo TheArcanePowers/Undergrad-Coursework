@@ -147,7 +147,6 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
 			delay_2[k] = 0;
 		}
 
-		/* gtz_out[..] = ... */
 		/* ========================= */
 		flag = 1;
 		N = 0;
