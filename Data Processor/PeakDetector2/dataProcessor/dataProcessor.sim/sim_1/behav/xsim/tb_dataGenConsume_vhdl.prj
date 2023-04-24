@@ -1,0 +1,9 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../dataProcessor.srcs/sources_1/imports/lukeh/Downloads/Assignment 2/Assignment 2/peak_detector/common_pack.vhd" \
+"../../../../dataProcessor.srcs/sources_1/imports/lukeh/OneDrive - University of Bristol/University Of Bristol/dataConsume.vhd" \
+"../../../../dataProcessor.srcs/sources_1/imports/lukeh/Downloads/Assignment 2/Assignment 2/peak_detector/dataGen.vhd" \
+"../../../../dataProcessor.srcs/sources_1/imports/lukeh/Downloads/Assignment 2/Assignment 2/peak_detector/signed/tb_dataConsume_signed.vhd" \
+
+# Do not sort compile order
+nosort
