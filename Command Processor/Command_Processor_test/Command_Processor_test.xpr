@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="61" Path="C:/Users/leoma/Documents/GitHub/Digital-Design/Command Processor/Command_Processor_test/Command_Processor_test.xpr">
+<Project Version="7" Minor="61" Path="C:/Users/lukeh/Documents/GitHub/Digital-Design/Command Processor/Command_Processor_test/Command_Processor_test.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="f652334e461d414ca681d828089b2d0d"/>
@@ -113,12 +113,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/common_pack.vhd">
-        <FileInfo RelPath="common_pack.vhd">
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PSRCDIR/sources_1/new/cmdProc.vhd">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -133,8 +127,10 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/signed/dataConsume_synthesised_signed.vhd">
-        <FileInfo RelPath="signed/dataConsume_synthesised_signed.vhd">
+      <File Path="$PSRCDIR/sources_1/imports/peak_detector/signed/dataConsume_synthesised_signed.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/signed/dataConsume_synthesised_signed.vhd"/>
+          <Attr Name="ImportTime" Val="1676455872"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
@@ -155,11 +151,16 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/imports/peak_detector/signed/dataConsume_synthesised_signed.vhd">
-        <FileInfo>
+      <File Path="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/common_pack.vhd">
+        <FileInfo RelPath="common_pack.vhd">
           <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/signed/dataConsume_synthesised_signed.vhd"/>
-          <Attr Name="ImportTime" Val="1676455872"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/signed/dataConsume_synthesised_signed.vhd">
+        <FileInfo RelPath="signed/dataConsume_synthesised_signed.vhd">
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>

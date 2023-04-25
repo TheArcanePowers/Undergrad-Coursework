@@ -47,11 +47,10 @@ BEGIN
     CASE curState IS
       WHEN S0 =>
         seqDone<='0';
-        dataReady<='1';
-        IF indexCounter=0 THEN
-          ctrlOut<='0'; --on brings ctrlOut back to 0 each time the index counter resets
-        END IF;
         dataReady<='0';
+        IF indexCounter=0 THEN
+          ctrlOut<='0';
+        END IF;
         IF start='1' THEN --changes ctrlOut to tell data gen to request new data
           ctrlOut<=NOT ctrlIn;
           IF xorIn='1' THEN
