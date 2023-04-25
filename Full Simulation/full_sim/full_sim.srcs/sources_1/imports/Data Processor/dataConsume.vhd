@@ -204,6 +204,9 @@ BEGIN
         singleCounter <= 0; --both the single and tens counters are reset and the hundreds counter increments up.
         tensCounter <= 0;
         hundredsCounter <= hundredsCounter+1;
+      ELSIF en_indexCounter='1' THEN
+        indexCounter<=indexCounter+1;
+      
       END IF;
     END IF;
   END PROCESS;
