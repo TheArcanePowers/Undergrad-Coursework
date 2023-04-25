@@ -47,6 +47,7 @@ BEGIN
     CASE curState IS
       WHEN S0 =>
         seqDone<='0';
+        dataReady<='1';
         IF indexCounter=0 THEN
           ctrlOut<='0'; --on brings ctrlOut back to 0 each time the index counter resets
         END IF;
@@ -87,6 +88,7 @@ BEGIN
         
       WHEN S3 =>
         lastByte<=data;
+        dataReady<='1';
         IF singleCounter=9 THEN
           singleLast <= '1'; --checks if single counter is 9, if so puts signleLast high so next time the single counter tries to incremnet it resets
         ELSE
