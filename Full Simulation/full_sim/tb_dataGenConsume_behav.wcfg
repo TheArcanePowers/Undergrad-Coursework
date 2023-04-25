@@ -12,14 +12,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0.000000000 ms"></ZoomStartTime>
-      <ZoomEndTime time="8.886660187 ms"></ZoomEndTime>
-      <Cursor1Time time="5.832225000 ms"></Cursor1Time>
+      <ZoomEndTime time="30.441690001 ms"></ZoomEndTime>
+      <Cursor1Time time="30.441690000 ms"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="178"></NameColumnWidth>
+      <NameColumnWidth column_width="173"></NameColumnWidth>
       <ValueColumnWidth column_width="72"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="73" />
+   <WVObjectSize size="72" />
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -135,12 +135,6 @@
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/secondPhaseDone" type="logic">
       <obj_property name="ElementShortName">secondPhaseDone</obj_property>
       <obj_property name="ObjectShortName">secondPhaseDone</obj_property>
-   </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/dataConsume1/clk" type="logic">
-      <obj_property name="ElementShortName">clk</obj_property>
-      <obj_property name="ObjectShortName">clk</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/dataConsume1/reset" type="logic">
       <obj_property name="ElementShortName">reset</obj_property>
