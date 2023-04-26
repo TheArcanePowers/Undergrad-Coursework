@@ -232,6 +232,13 @@ BEGIN
                 res_globalCount <= '1';
                 secondPhase <= '0';
             END IF;
+            
+        WHEN S3 =>
+            IF seqDone = '1' THEN
+                secondPhase <= '1'; -- tells us it's the last run
+                finalDataReg <= dataResults;    -- Load registers
+                bcdReg <= maxIndex;             -- Load registers
+            END IF;
                 
         WHEN S4 =>  -- Load Bits for Printing--
             IF threeCount = 0 THEN
@@ -250,11 +257,6 @@ BEGIN
                     -- Skip everything, we've just outputted last space.
                     res_threeCount <= '1';
                 ELSE
-                    IF seqDone = '1' THEN
-                        secondPhase <= '1'; -- tells us it's the last run
-                        finalDataReg <= dataResults;    -- Load registers
-                        bcdReg <= maxIndex;             -- Load registers
-                    END IF;
                     IF threeCount = 2 THEN
                         -- might need to change to only happen if seqdone != 1
                         start <= '1';

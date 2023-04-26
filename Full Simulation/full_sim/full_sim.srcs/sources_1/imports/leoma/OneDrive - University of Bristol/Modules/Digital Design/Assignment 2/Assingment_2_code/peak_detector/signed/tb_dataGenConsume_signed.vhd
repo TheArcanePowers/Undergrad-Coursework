@@ -136,11 +136,13 @@ architecture test of tb_dataGenConsume is
   type ARRAY3D_BCD_TYPE is array (0 to SEQ_COUNT_MAX) of BCD_ARRAY_TYPE(2 downto 0);
   
  
---  constant RESULTS : ARRAY3D_TYPE :=((X"06", X"92", X"C7", X"71", X"F9", X"93", X"A8"),
---                                      (X"49", X"52", X"EB", X"70", X"3B", X"39", X"68"));
+  constant RESULTS : ARRAY3D_TYPE :=((X"06", X"92", X"C7", X"71", X"F9", X"93", X"A8"),
+                                      (X"49", X"52", X"EB", X"70", X"3B", X"39", X"68"));
 
-  constant RESULTS : ARRAY3D_TYPE :=((X"A8", X"93", X"F9", X"71", X"C7", X"92", X"06"),
-                                      (X"68", X"39", X"3B", X"70", X"EB", X"52", X"49"));
+--"06", X"92", X"C7", X"71", X"F9", X"93", X"A8"
+
+  --constant RESULTS : ARRAY3D_TYPE :=((X"A8", X"93", X"F9", X"71", X"C7", X"92", X"06"),
+--                                      (X"68", X"39", X"3B", X"70", X"EB", X"52", X"49"));
  
   constant peak : ARRAY3D_BCD_TYPE :=((X"0",X"0",X"8"),(X"0",X"0",X"4"));
                                       
@@ -181,6 +183,7 @@ begin
           -- try changing (RESULT_BYTE_NUM-1-i) to (i) if there is a mismatch between all bytes except the peak
           -- it is important that the implementations of the data consumer and command processor within
           -- the same group follow the same format
+          -- HAD TO CHANGE RESULT_BYTE_NUM-1-i to (i)!!!!!
           assert sig_dataResults(RESULT_BYTE_NUM-1-i) = RESULTS(seqCount)(i) report "Mismatch for seq " & INTEGER'IMAGE(seqCount) 
           & ":" & CR & "byte " & INTEGER'IMAGE(i) & " should be " & vec2str(RESULTS(seqCount)(i))
           & CR & "but is           " & vec2str(sig_dataResults(RESULT_BYTE_NUM-1-i)) severity warning;
