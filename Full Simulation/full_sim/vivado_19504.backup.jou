@@ -2,10 +2,10 @@
 # Vivado v2022.2 (64-bit)
 # SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
 # IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
-# Start of session at: Wed Apr 26 14:25:58 2023
-# Process ID: 10644
+# Start of session at: Wed Apr 26 00:38:15 2023
+# Process ID: 19504
 # Current directory: C:/Users/lukeh/Documents/GitHub/Digital-Design/Full Simulation/full_sim
-# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent26948 C:\Users\lukeh\Documents\GitHub\Digital-Design\Full Simulation\full_sim\full_sim.xpr
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent3364 C:\Users\lukeh\Documents\GitHub\Digital-Design\Full Simulation\full_sim\full_sim.xpr
 # Log file: C:/Users/lukeh/Documents/GitHub/Digital-Design/Full Simulation/full_sim/vivado.log
 # Journal file: C:/Users/lukeh/Documents/GitHub/Digital-Design/Full Simulation/full_sim\vivado.jou
 # Running On: LAPTOP-I8F9F75T, OS: Windows, CPU Frequency: 2419 MHz, CPU Physical cores: 4, Host memory: 8215 MB
@@ -19,7 +19,7 @@ source tb_dataGenConsume.tcl
 current_wave_config {tb_dataGenConsume_behav.wcfg}
 add_wave {{/tb_dataGenConsume/dataConsume1}} 
 relaunch_sim
-run 20 ms
+run 65 ms
 close_sim
 launch_simulation
 open_wave_config {C:/Users/lukeh/Documents/GitHub/Digital-Design/Full Simulation/full_sim/tb_dataGenConsume_behav.wcfg}
@@ -27,13 +27,5 @@ source tb_dataGenConsume.tcl
 current_wave_config {tb_dataGenConsume_behav.wcfg}
 add_wave {{/tb_dataGenConsume/dataConsume1}} 
 relaunch_sim
-run 20 ms
-close_sim
-launch_simulation
-open_wave_config {C:/Users/lukeh/Documents/GitHub/Digital-Design/Full Simulation/full_sim/tb_dataGenConsume_behav.wcfg}
-source tb_dataGenConsume.tcl
-current_wave_config {tb_dataGenConsume_behav.wcfg}
-add_wave {{/tb_dataGenConsume/dataConsume1}} 
-relaunch_sim
-run 20 ms
+run 65 ms
 close_sim
