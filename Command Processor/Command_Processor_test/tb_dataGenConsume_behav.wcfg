@@ -12,14 +12,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0.000000000 ms"></ZoomStartTime>
-      <ZoomEndTime time="100.847500001 ms"></ZoomEndTime>
-      <Cursor1Time time="100.847500000 ms"></Cursor1Time>
+      <ZoomEndTime time="64.050000001 ms"></ZoomEndTime>
+      <Cursor1Time time="45.001000000 ms"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="188"></NameColumnWidth>
+      <NameColumnWidth column_width="183"></NameColumnWidth>
       <ValueColumnWidth column_width="72"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="31" />
+   <WVObjectSize size="27" />
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -29,10 +29,6 @@
    <wvobject fp_name="/tb_dataGenConsume/sig_rx" type="logic">
       <obj_property name="ElementShortName">sig_rx</obj_property>
       <obj_property name="ObjectShortName">sig_rx</obj_property>
-   </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/rxNow_reg" type="logic">
-      <obj_property name="ElementShortName">rxNow_reg</obj_property>
-      <obj_property name="ObjectShortName">rxNow_reg</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/rxData" type="array">
       <obj_property name="ElementShortName">rxData[7:0]</obj_property>
@@ -56,10 +52,6 @@
       <obj_property name="ElementShortName">txDone</obj_property>
       <obj_property name="ObjectShortName">txDone</obj_property>
    </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/txDone_reg" type="logic">
-      <obj_property name="ElementShortName">txDone_reg</obj_property>
-      <obj_property name="ObjectShortName">txDone_reg</obj_property>
-   </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/start" type="logic">
       <obj_property name="ElementShortName">start</obj_property>
       <obj_property name="ObjectShortName">start</obj_property>
@@ -68,11 +60,6 @@
       <obj_property name="ElementShortName">numWords_bcd[2:0][3:0]</obj_property>
       <obj_property name="ObjectShortName">numWords_bcd[2:0][3:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/dataReg" type="array">
-      <obj_property name="ElementShortName">dataReg[7:0]</obj_property>
-      <obj_property name="ObjectShortName">dataReg[7:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/dataReady" type="logic">
       <obj_property name="ElementShortName">dataReady</obj_property>
       <obj_property name="ObjectShortName">dataReady</obj_property>
@@ -80,6 +67,14 @@
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/byte" type="array">
       <obj_property name="ElementShortName">byte[7:0]</obj_property>
       <obj_property name="ObjectShortName">byte[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/dataGen1/ctrlOut" type="logic">
+      <obj_property name="ElementShortName">ctrlOut</obj_property>
+      <obj_property name="ObjectShortName">ctrlOut</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/dataGen1/ctrlIn" type="logic">
+      <obj_property name="ElementShortName">ctrlIn</obj_property>
+      <obj_property name="ObjectShortName">ctrlIn</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/maxIndex" type="array">
       <obj_property name="ElementShortName">maxIndex[2:0][3:0]</obj_property>
@@ -129,21 +124,9 @@
       <obj_property name="ElementShortName">res_threeCount</obj_property>
       <obj_property name="ObjectShortName">res_threeCount</obj_property>
    </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/commandValid" type="logic">
-      <obj_property name="ElementShortName">commandValid</obj_property>
-      <obj_property name="ObjectShortName">commandValid</obj_property>
-   </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/secondInputMode" type="logic">
-      <obj_property name="ElementShortName">secondInputMode</obj_property>
-      <obj_property name="ObjectShortName">secondInputMode</obj_property>
-   </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/bcdReg" type="array">
       <obj_property name="ElementShortName">bcdReg[2:0][3:0]</obj_property>
       <obj_property name="ObjectShortName">bcdReg[2:0][3:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/tempData" type="array">
-      <obj_property name="ElementShortName">tempData[7:0]</obj_property>
-      <obj_property name="ObjectShortName">tempData[7:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/secondPhaseDone" type="logic">
       <obj_property name="ElementShortName">secondPhaseDone</obj_property>
