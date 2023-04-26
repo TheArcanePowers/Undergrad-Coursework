@@ -49,7 +49,7 @@ BEGIN
         seqDone<='0';
         dataReady<='0';
         IF indexCounter=0 THEN
-          ctrlOut<='0';
+          ctrlOut<=ctrlIn;
         END IF;
         IF start='1' THEN --changes ctrlOut to tell data gen to request new data
           ctrlOut<=NOT ctrlIn;
@@ -59,7 +59,10 @@ BEGIN
           ELSE
             nextState<=S1;
           END IF;
-        ELSE
+        ELSIF start='0' THEN
+          ctrlOut<=ctrlIn;
+          nextState<=S0;
+        ELSE 
           nextState<=S0;
         END IF;
       
