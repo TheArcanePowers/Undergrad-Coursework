@@ -110,17 +110,17 @@ BEGIN
           maxIndex(2)<=BCD0; --Loads the convert the new peak byte to BCD and assign it to maxIndex
           maxIndex(1)<=BCD1;
           maxIndex(0)<=BCD2;
-          dataResults(0)<=threePrev(7 downto 0); --load in the 3 previous bits from the data register
-          dataResults(1)<=threePrev(15 downto 8);
-          dataResults(2)<=threePrev(23 downto 16);
+          dataResults(6)<=threePrev(7 downto 0); --load in the 3 previous bits from the data register
+          dataResults(5)<=threePrev(15 downto 8);
+          dataResults(4)<=threePrev(23 downto 16);
         ELSIF newInt='0' THEN -- if the new byte isn't bigger than the current peak
           IF postbitcounterTrack='1' AND postbitCounter=0 THEN --used to store the first byte after the peak
-            dataResults(4)<=data; --loads first byte after peak
+            dataResults(2)<=data; --loads first byte after peak
             recentInt<='0';
           ELSIF postbitCounter=1 THEN
-            dataResults(5)<=data; --loads second byte after peak
+            dataResults(1)<=data; --loads second byte after peak
           ELSIF postbitCounter=2 THEN
-            dataResults(6)<=data(7 downto 0);  --loads third byte after peak
+            dataResults(0)<=data(7 downto 0);  --loads third byte after peak
             postbitcounterTrack<='0';  --sets back to 0 to show all post peak bits have been counted through
             res_postbitCounter<='1'; --resets the postbit Coutner
           END IF;   
