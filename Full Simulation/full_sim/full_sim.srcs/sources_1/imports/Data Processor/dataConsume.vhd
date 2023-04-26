@@ -42,8 +42,8 @@ BEGIN
     en_indexCounter<='0';
     res_postbitCounter<='0';
     res_indexCounter<='0';
-    en_Reg<='0';
-    convProcess<='0';
+    en_Reg<='0'; -- the enable of the 24-bit register 
+    convProcess<='0'; --the enable of the integer to BCD converter
     CASE curState IS
       WHEN S0 =>
         seqDone<='0';
@@ -71,14 +71,14 @@ BEGIN
           nextState<=S1;
         END IF;
       
-      WHEN S2 =>
+      WHEN S2 =>  --this state mainly covers enabling the BCD converter and enabling the 24-bit register 
         byte<=data;
         en_Reg<='1'; --this is used as an enable for the 24-bit register to load the values into the register.
         curInt<=to_integer(signed(maxByte)); --curInt is the current max byte in signed integer form.
         dataInt<=to_integer(signed(data)); --dataInt is the byte thats currently in the data generator in singed integer form.
         convProcess<='1'; --enables conversion to BCD of the current byte position.
         IF recentInt='1' OR postbitCounter=3 THEN
-          res_postbitCounter<='1';
+          res_postbitCounter<='1'; --resets the postbti counter if a new peak bit is detected
         ELSIF postbitcounterTrack='1' THEN
           en_postbitCounter<='1';
         END IF;
@@ -86,12 +86,12 @@ BEGIN
         
         
       WHEN S3 =>
-        lastByte<=data;
-        dataReady<='1';
+        lastByte<=data; --holds this new byte 
+        dataReady<='1'; 
         IF singleCounter=9 THEN
           singleLast <= '1'; --checks if single counter is 9, if so puts signleLast high so next time the single counter tries to incremnet it resets
         ELSE
-          singleLast<='0';
+          singleLast<='0'; --else leaves it low
         END IF;
         IF tensCounter=9 THEN
           tensLast<='1';  --checks if tens counter is 9, if so puts tensLast high so next time the tens counter tries to incremnet it resets
@@ -101,7 +101,7 @@ BEGIN
         IF newInt='1' OR indexCounter=1 THEN
           dataResults(3)<=data; --if the byte in data gen is the new highest byte or if its the first one, replace the peak bit in dataResults
           en_postbitCounter<='1'; --enable postbitCounter (
-          recentInt<='1';
+          recentInt<='1'; --ths shows a new peak bit is now, and is used for the postbitCounter.
           postbitcounterTrack<='1'; --this will enable the post counter bit for the next time we reach S3 for the next set of data, unless new peak bit next time.
           maxByte<=data; --used to store the new peak byte in another spot except for reg
           maxIndex(2)<=BCD0; --Loads the convert the new peak byte to BCD and assign it to maxIndex
@@ -112,22 +112,22 @@ BEGIN
           dataResults(2)<=threePrev(23 downto 16);
         ELSIF newInt='0' THEN -- if the new byte isn't bigger than the current peak
           IF postbitcounterTrack='1' AND postbitCounter=0 THEN --used to store the first byte after the peak
-            dataResults(4)<=data;
+            dataResults(4)<=data; --loads first byte after peak
             recentInt<='0';
           ELSIF postbitCounter=1 THEN
-            dataResults(5)<=data;
+            dataResults(5)<=data; --loads second byte after peak
           ELSIF postbitCounter=2 THEN
-            dataResults(6)<=data(7 downto 0);
-            postbitcounterTrack<='0';
-            res_postbitCounter<='1';
+            dataResults(6)<=data(7 downto 0);  --loads third byte after peak
+            postbitcounterTrack<='0';  --sets back to 0 to show all post peak bits have been counted through
+            res_postbitCounter<='1'; --resets the postbit Coutner
           END IF;   
         END IF;
         IF indexCounter=mainIndex THEN --if indexCounter=mainIndex (mainIndex is numWords_bcd in integer form) resets counters
-          seqDone<='1';
-          res_indexCounter<='1';
+          seqDone<='1'; --overall sequence done
+          res_indexCounter<='1'; --resets indexCounter
           nextState<=S0;
         ELSE 
-          nextState<=S0;
+          nextState<=S0; --all go back to initial state
         END IF;
                    
     END CASE;
@@ -147,7 +147,7 @@ BEGIN
   prev_ctrlIn: PROCESS(clk)
   BEGIN
     IF clk'EVENT AND clk='1' THEN
-      prevctrlIn<=ctrlIn;
+      prevctrlIn<=ctrlIn; 
       xorIn<= prevctrlIn XOR ctrlIn;
     END IF;
   END PROCESS;
@@ -159,9 +159,9 @@ BEGIN
       threePrev<="000000000000000000000000"; --resets the bit register to be filled with 0's on reset
     ELSIF clk'EVENT AND clk='1' AND en_Reg='1' THEN
       FOR i IN 15 DOWNTO 0 LOOP
-        threePrev(i)<=threePrev(i+8);
+        threePrev(i)<=threePrev(i+8); --moves bits 8 along e.g. if postition was previously threePrev(17) it will move to threePrev(9)
       END LOOP;
-      threePrev(23 DOWNTO 16)<=lastByte;
+      threePrev(23 DOWNTO 16)<=lastByte; --moves in previous data into register 
     END IF;
   END PROCESS;
      
@@ -229,7 +229,7 @@ BEGIN
      IF clk='1' AND clk'EVENT THEN
        IF convProcess='1' THEN
          CASE hundredsCounter IS --converts to BCD the current integer values in all the counters
-           WHEN 9 => BCD0 <= "1001";
+           WHEN 9 => BCD0 <= "1001"; --selects the binary value for each counter based on current int value they hold.
            WHEN 8 => BCD0 <= "1000";
            WHEN 7 => BCD0 <= "0111";
            WHEN 6 => BCD0 <= "0110";
@@ -275,8 +275,8 @@ BEGIN
   BCD_Calc: PROCESS(clk)
   BEGIN
     IF clk='1' AND clk'EVENT THEN
-      maxIndex0<=to_integer(unsigned(numWords_bcd(0)));
-      maxIndex1<=to_integer(unsigned(numWords_bcd(1)));
+      maxIndex0<=to_integer(unsigned(numWords_bcd(0))); --calculates what the total of number of words in the sequence there is and 
+      maxIndex1<=to_integer(unsigned(numWords_bcd(1))); --converts it from BCD to int
       maxIndex2<=to_integer(unsigned(numWords_bcd(2)));
       mainIndex<=(maxIndex2*100)+(maxIndex1*10)+(maxIndex0);
     END IF;
