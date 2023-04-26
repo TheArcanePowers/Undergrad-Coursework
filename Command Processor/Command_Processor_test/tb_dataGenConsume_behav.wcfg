@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000000000 ms"></ZoomStartTime>
-      <ZoomEndTime time="64.050000001 ms"></ZoomEndTime>
-      <Cursor1Time time="45.001000000 ms"></Cursor1Time>
+      <ZoomStartTime time="20.840230171 ms"></ZoomStartTime>
+      <ZoomEndTime time="55.833153966 ms"></ZoomEndTime>
+      <Cursor1Time time="50.001000000 ms"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="183"></NameColumnWidth>
+      <NameColumnWidth column_width="178"></NameColumnWidth>
       <ValueColumnWidth column_width="72"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="27" />
@@ -88,6 +88,10 @@
       <obj_property name="ElementShortName">finalDataReg[0:6][7:0]</obj_property>
       <obj_property name="ObjectShortName">finalDataReg[0:6][7:0]</obj_property>
    </wvobject>
+   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/bcdReg" type="array">
+      <obj_property name="ElementShortName">bcdReg[2:0][3:0]</obj_property>
+      <obj_property name="ObjectShortName">bcdReg[2:0][3:0]</obj_property>
+   </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/seqDone" type="logic">
       <obj_property name="ElementShortName">seqDone</obj_property>
       <obj_property name="ObjectShortName">seqDone</obj_property>
@@ -123,10 +127,6 @@
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/res_threeCount" type="logic">
       <obj_property name="ElementShortName">res_threeCount</obj_property>
       <obj_property name="ObjectShortName">res_threeCount</obj_property>
-   </wvobject>
-   <wvobject fp_name="/tb_dataGenConsume/cmdProc1/bcdReg" type="array">
-      <obj_property name="ElementShortName">bcdReg[2:0][3:0]</obj_property>
-      <obj_property name="ObjectShortName">bcdReg[2:0][3:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_dataGenConsume/cmdProc1/secondPhaseDone" type="logic">
       <obj_property name="ElementShortName">secondPhaseDone</obj_property>

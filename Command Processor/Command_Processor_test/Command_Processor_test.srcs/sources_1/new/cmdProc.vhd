@@ -71,9 +71,7 @@ architecture Behavioral of cmdProc is
         END IF;
         return eightBitAscii;
     end function;
-    -------
-    signal input_bcdReg: std_logic;
-    signal input_finalDataReg: std_logic;
+ 
     ---
 BEGIN
 
@@ -183,24 +181,24 @@ BEGIN
 END PROCESS;
 
 -- --BCD Register
-bcd_Register: process (clk)
-BEGIN
-    IF rising_edge(clk) THEN
-        IF input_bcdReg = '1' THEN
-            bcdReg <= maxIndex;
-        END IF;
-    END IF;
-END PROCESS;
+--bcd_Register: process (clk)
+--BEGIN
+--    IF rising_edge(clk) THEN
+--        IF input_bcdReg = '1' THEN
+--            bcdReg <= maxIndex;
+--        END IF;
+--    END IF;
+--END PROCESS;
 
--- --FinalData Register
-finalData_Register: process (clk)
-BEGIN
-    IF rising_edge(clk) THEN
-        IF input_finalDataReg = '1' THEN
-            finalDataReg <= dataResults;
-        END IF;
-    END IF;
-END PROCESS;
+---- --FinalData Register
+--finalData_Register: process (clk)
+--BEGIN
+--    IF rising_edge(clk) THEN
+--        IF input_finalDataReg = '1' THEN
+--            finalDataReg <= dataResults;
+--        END IF;
+--    END IF;
+--END PROCESS;
 
 -- Combinational Output Logic (all covered in next state logic above)
 combi_out: PROCESS(curState, rxNow, txDone)--, seqDone)
@@ -216,9 +214,9 @@ BEGIN
     en_threeCount <= '0';
     res_threeCount <= '0';
     --
-    input_bcdReg <= '0';
-    input_finalDataReg <= '0';
-    ---
+--    input_bcdReg <= '0';
+--    input_finalDataReg <= '0';
+--    ---
     CASE curState IS
         WHEN S0 =>  -- AWAIT FOR INPUT
             en_globalCount <= '0'; -- FIND BETTER PLACE?
@@ -278,11 +276,11 @@ BEGIN
                     res_threeCount <= '1';
                 ELSE
                     IF seqDone = '1' THEN
-                        input_finalDataReg <= '1';
-                        input_bcdReg <= '1';
+                        --input_finalDataReg <= '1';
+                        --input_bcdReg <= '1';
                         secondPhase <= '1'; -- tells us it's the last run
-                        --finalDataReg <= dataResults;    -- Load registers
-                        --bcdReg <= maxIndex;             -- Load registers
+                        finalDataReg <= dataResults;    -- Load registers
+                        bcdReg <= maxIndex;             -- Load registers
 
                     END IF;
                     IF threeCount = 2 THEN

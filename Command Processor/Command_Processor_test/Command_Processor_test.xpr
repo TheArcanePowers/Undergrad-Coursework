@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="61" Path="C:/Users/lukeh/Documents/GitHub/Digital-Design/Command Processor/Command_Processor_test/Command_Processor_test.xpr">
+<Project Version="7" Minor="61" Path="C:/Users/leoma/Documents/GitHub/Digital-Design/Command Processor/Command_Processor_test/Command_Processor_test.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="f652334e461d414ca681d828089b2d0d"/>
@@ -58,7 +58,7 @@
     <Option Name="IPUserFilesDir" Val="$PIPUSERFILESDIR"/>
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
-    <Option Name="WTXSimLaunchSim" Val="146"/>
+    <Option Name="WTXSimLaunchSim" Val="149"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -97,6 +97,18 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/UART_TX_CTRL.vhd">
+        <FileInfo RelPath="UART_TX_CTRL.vhd">
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/common_pack.vhd">
+        <FileInfo RelPath="common_pack.vhd">
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sources_1/new/cmdProc.vhd">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -111,10 +123,8 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/imports/peak_detector/signed/dataConsume_synthesised_signed.vhd">
-        <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/signed/dataConsume_synthesised_signed.vhd"/>
-          <Attr Name="ImportTime" Val="1676455872"/>
+      <File Path="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/signed/dataConsume_synthesised_signed.vhd">
+        <FileInfo RelPath="signed/dataConsume_synthesised_signed.vhd">
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
@@ -135,34 +145,11 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/imports/peak_detector/UART_TX_CTRL.vhd">
+      <File Path="$PSRCDIR/sources_1/imports/peak_detector/signed/dataConsume_synthesised_signed.vhd">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/UART_TX_CTRL.vhd"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/signed/dataConsume_synthesised_signed.vhd"/>
           <Attr Name="ImportTime" Val="1676455872"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/peak_detector/common_pack.vhd">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/common_pack.vhd"/>
-          <Attr Name="ImportTime" Val="1676455871"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/common_pack.vhd">
-        <FileInfo RelPath="common_pack.vhd">
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/signed/dataConsume_synthesised_signed.vhd">
-        <FileInfo RelPath="signed/dataConsume_synthesised_signed.vhd">
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
@@ -178,13 +165,6 @@
       </File>
       <File Path="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/UART_RX_CTRL.vhd">
         <FileInfo RelPath="UART_RX_CTRL.vhd">
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../../../../../OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/UART_TX_CTRL.vhd">
-        <FileInfo RelPath="UART_TX_CTRL.vhd">
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
