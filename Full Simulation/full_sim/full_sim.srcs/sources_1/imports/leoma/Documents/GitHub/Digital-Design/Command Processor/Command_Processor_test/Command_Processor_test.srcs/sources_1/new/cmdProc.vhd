@@ -118,7 +118,7 @@ BEGIN
         -- TODO: ADD NEWLINE
             
         WHEN S3 =>  -- WAIT FOR DataReady from Data Processor --
-            IF dataReady = '1' AND txDone = '1' THEN     --PROBABLY NO NEED TO WAIT FOR TX DONE SINCE S5 ALREADY DOES THAT
+            IF dataReady = '1' THEN --AND txDone = '1' THEN --PROBABLY NO NEED TO WAIT FOR TX DONE SINCE S5 ALREADY DOES THAT
                 nextState <= S4;
             ELSE
                 nextState <= S3;    -- Loops
