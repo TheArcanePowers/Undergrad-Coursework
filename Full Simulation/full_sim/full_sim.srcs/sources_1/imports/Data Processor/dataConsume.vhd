@@ -141,7 +141,7 @@ BEGIN
   BEGIN
     IF reset='1' THEN
       curState<=S0; --Goes back to S0 on reset
-    ELSIF clk'EVENT AND clk='1' THEN
+    ELSIF rising_edge(clk) THEN
       curState<=nextState; --Advances to nextState on the rising edge of each clock cycle
     END IF;
   END PROCESS;
@@ -149,7 +149,7 @@ BEGIN
   --Flip-flop to hold previous ctrlIn value and to XOR it with current ctrlIn-
   prev_ctrlIn: PROCESS(clk)
   BEGIN
-    IF clk'EVENT AND clk='1' THEN
+    IF rising_edge(clk) THEN
       prevctrlIn<=ctrlIn; 
       xorIn<= prevctrlIn XOR ctrlIn;
     END IF;
@@ -160,7 +160,7 @@ BEGIN
   BEGIN 
     IF reset='1' THEN
       threePrev<="000000000000000000000000"; --resets the bit register to be filled with 0's on reset
-    ELSIF clk'EVENT AND clk='1' AND en_Reg='1' THEN
+    ELSIF rising_edge(clk) AND en_Reg='1' THEN
       FOR i IN 15 DOWNTO 0 LOOP
         threePrev(i)<=threePrev(i+8); --moves bits 8 along e.g. if postition was previously threePrev(17) it will move to threePrev(9)
       END LOOP;
@@ -176,7 +176,7 @@ BEGIN
   BEGIN 
     IF reset='1' or res_postbitCounter='1' THEN
       postbitCounter <= 0; --resets to 0 when any reset is high.
-    ELSIF clk'EVENT AND clk='1' THEN
+    ELSIF rising_edge(clk) THEN
       IF en_postbitCounter='1' THEN --when clock is high and enable is high, increment the counter by 1.
         postbitCounter <= postbitCounter+1;
       END IF;
@@ -186,12 +186,12 @@ BEGIN
   --Index Counter--
   Index_Counter: PROCESS(clk)
   BEGIN
-    IF reset='1' or (res_indexCounter='1' AND clk'EVENT AND clk='1') THEN --if resets are high, reset all counters 
+    IF reset='1' or (res_indexCounter='1' AND rising_edge(clk)) THEN --if resets are high, reset all counters 
       indexCounter <= 0; --this counter is used for the whole index, goes up to 500
       singleCounter<= 0; --this counter is used to count up the first digit of the counter, needed to convert the peak position to BCD e.g. if indexCount is 367 this would hold integer value of 7
       tensCounter<= 0;  --this counter is used to count up the digit in the tens column of the counter, needed to convert the peak position to BCD e.g. if indexCount is 367 this would have integer value of 6
       hundredsCounter<= 0;  --this counter is used to count up the digit in the hundreds column of the counter, needed to convert the peak position to BCD e.g. if indexCount is 367 this would have value of 3
-    ELSIF clk'EVENT AND clk='1' THEN
+    ELSIF rising_edge(clk) THEN
       IF en_indexCounter='1' AND singleLast='0' AND tensLast='0' THEN
         indexCounter <= indexCounter+1; --if the tens digit and the current first digit aren't 9
         singleCounter <= singleCounter+1;
@@ -217,7 +217,7 @@ BEGIN
   --Int Comparator--
   Int_Calc: PROCESS(clk)
   BEGIN
-    IF clk='1' and clk'EVENT THEN
+    IF rising_edge(clk) THEN
       IF dataInt>curInt THEN --Calculates which is bigger between the current max byte and the one coming from the data generator
         newInt<='1'; --if the new byte is bigger this acts as enable to load it in.
       ELSE
@@ -233,7 +233,7 @@ BEGIN
        BCD0<="0000";
        BCD1<="0000";
        BCD2<="0000";
-     ELSIF clk='1' AND clk'EVENT THEN
+     ELSIF rising_edge(clk) THEN
        IF convProcess='1' THEN
          CASE hundredsCounter IS --converts to BCD the current integer values in all the counters
            WHEN 9 => BCD0 <= "1001"; --selects the binary value for each counter based on current int value they hold.
@@ -281,7 +281,7 @@ BEGIN
   --BCD Calcualtor--
   BCD_Calc: PROCESS(clk)
   BEGIN
-    IF clk='1' AND clk'EVENT THEN
+    IF rising_edge(clk) THEN
       maxIndex0<=to_integer(unsigned(numWords_bcd(0))); --calculates what the total of number of words in the sequence there is and 
       maxIndex1<=to_integer(unsigned(numWords_bcd(1))); --converts it from BCD to int
       maxIndex2<=to_integer(unsigned(numWords_bcd(2)));
