@@ -71,6 +71,9 @@ architecture Behavioral of cmdProc is
         END IF;
         return eightBitAscii;
     end function;
+    ---
+    signal en_bcdReg, en_finalDataReg: std_logic;
+    --
 BEGIN
 
 -- TODO TO IMPROVE--
@@ -115,7 +118,7 @@ BEGIN
         -- TODO: ADD NEWLINE
             
         WHEN S3 =>  -- WAIT FOR DataReady from Data Processor --
-            IF dataReady = '1' AND txDone = '1' THEN     --wait for transmission complete AND data ready
+            IF dataReady = '1' AND txDone = '1' THEN     --PROBABLY NO NEED TO WAIT FOR TX DONE SINCE S5 ALREADY DOES THAT
                 nextState <= S4;
             ELSE
                 nextState <= S3;    -- Loops
@@ -178,6 +181,34 @@ BEGIN
     END IF;
 END PROCESS;
 
+--BCD REG
+BCD_Reg: process (reset, clk)
+BEGIN
+    if reset='1' THEN
+        bcdReg(2 downto 0) <= (others => "0");
+    ELSE
+        IF rising_edge(clk) THEN
+            IF en_bcdReg = '1' THEN
+                bcdReg <= maxIndex;
+            END IF;
+        END IF;
+    END IF;
+END PROCESS;
+
+--FINALDATAREG
+finalData_Reg: process (reset, clk)
+BEGIN
+    if reset='1' THEN
+        finalDataReg(0 to 6) <= (others => "0");
+    ELSE
+        IF rising_edge(clk) THEN
+            if en_finalDataReg = '1' THEN
+                finalDataReg <= dataResults;
+            END IF;
+        END IF;
+    END IF;
+END PROCESS;
+
 -- Combinational Output Logic (all covered in next state logic above)
 combi_out: PROCESS(curState, rxNow, txDone, seqDone)
 BEGIN
@@ -191,6 +222,9 @@ BEGIN
     res_globalCount <= '0';
     en_threeCount <= '0';
     res_threeCount <= '0';
+    --
+    en_bcdReg <= '0';
+    en_finalDataReg <= '0';
     --
     CASE curState IS
         WHEN S0 =>  -- AWAIT FOR INPUT
@@ -236,8 +270,10 @@ BEGIN
         WHEN S3 =>
             IF seqDone = '1' THEN
                 secondPhase <= '1'; -- tells us it's the last run
-                finalDataReg <= dataResults;    -- Load registers
-                bcdReg <= maxIndex;             -- Load registers
+                en_finalDataReg <= '1';
+                en_bcdReg <= '1';
+                --finalDataReg <= dataResults;    -- Load registers
+                --bcdReg <= maxIndex;             -- Load registers
             END IF;
                 
         WHEN S4 =>  -- Load Bits for Printing--
