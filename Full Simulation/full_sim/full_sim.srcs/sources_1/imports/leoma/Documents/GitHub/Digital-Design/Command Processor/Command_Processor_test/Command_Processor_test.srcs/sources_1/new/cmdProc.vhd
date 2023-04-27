@@ -185,7 +185,7 @@ END PROCESS;
 BCD_Reg: process (reset, clk)
 BEGIN
     if reset='1' THEN
-        bcdReg(2 downto 0) <= (others => "0");
+        bcdReg(2 downto 0) <= (others => "0000"); -- change to "0000"
     ELSE
         IF rising_edge(clk) THEN
             IF en_bcdReg = '1' THEN
@@ -199,7 +199,7 @@ END PROCESS;
 finalData_Reg: process (reset, clk)
 BEGIN
     if reset='1' THEN
-        finalDataReg(0 to 6) <= (others => "0");
+        finalDataReg(0 to 6) <= (others => "00000000"); -- change to "00000000" otherwise synthesis fails
     ELSE
         IF rising_edge(clk) THEN
             if en_finalDataReg = '1' THEN
