@@ -55,11 +55,11 @@ architecture Behavioral of cmdProc is
     signal en_threeCount, res_threeCount: std_logic;
 	-- S2
     signal bcdReg: BCD_ARRAY_TYPE(2 downto 0); -- for maxIndex (numWords can be asserted immediately as an output)
-	signal secondPhase: std_logic;
+	signal secondPhaseReg: std_logic;
     -- S4
     signal finalDataReg: CHAR_ARRAY_TYPE(0 to RESULT_BYTE_NUM-1); --same as dataResults
     --S5
-    signal secondPhaseDone: std_logic;
+    signal secondPhaseDoneReg: std_logic;
     --
     function hexToAscii(fourBitHex: std_logic_vector(3 downto 0)) return std_logic_vector is
         variable eightBitAscii: std_logic_vector(7 downto 0);
@@ -72,7 +72,7 @@ architecture Behavioral of cmdProc is
         return eightBitAscii;
     end function;
     ---
-    signal en_bcdReg, en_finalDataReg: std_logic;
+    signal en_bcdReg, en_finalDataReg, en_secondPhaseReg, res_secondPhaseReg, en_secondPhaseDoneReg, res_secondPhaseDoneReg: std_logic;
     --
 BEGIN
 
@@ -100,14 +100,14 @@ BEGIN
             END IF;
         
         WHEN S2 =>  -- AWAIT FOR SUCCESSFULL ECHO -- COMBINE WITH S2
-            IF rxData >= x"30" AND rxData <= x"39" and secondPhase = '1' THEN
+            IF rxData >= x"30" AND rxData <= x"39" and secondPhaseReg = '1' THEN
                 IF globalCount = 2 THEN
                 -- 3 numbers and A/a previously recived. Full Command ---
                     nextState <= S3;
                 ELSE
                     nextState <= S0;
                 END IF;
-            ELSIF (rxData = x"50" OR rxData = x"70" OR rxData = x"4C" or rxData = x"6C") AND (secondPhase = '1') THEN
+            ELSIF (rxData = x"50" OR rxData = x"70" OR rxData = x"4C" or rxData = x"6C") AND (secondPhaseReg = '1') THEN
                 -- P/p/L/l and First Command previously recieved -- 
                 nextState <= S6;
             ELSE
@@ -129,7 +129,7 @@ BEGIN
             
         WHEN S5 =>  -- AWAIT FOR TRANSMISSION --
             IF txDone = '1' THEN --XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
-                IF secondPhase = '1' and threeCount = 2 THEN
+                IF secondPhaseReg = '1' and threeCount = 2 THEN
                     -- Skip everything, we've just outputted last space.
                     nextState <= S0;
                 ELSE
@@ -155,7 +155,7 @@ BEGIN
             
         WHEN S7 =>
             IF txDone = '1' THEN
-                IF secondPhaseDone = '1' AND threeCount = 2 THEN
+                IF secondPhaseDoneReg = '1' AND threeCount = 2 THEN
                     nextState <= S0;
                 ELSE
                     nextState <= S6;
@@ -209,6 +209,38 @@ BEGIN
     END IF;
 END PROCESS;
 
+--FINALDATAREG
+secondPhase_reg: process (reset, clk)
+BEGIN
+    if reset='1' THEN
+        secondPhaseReg <= '0';
+    ELSE
+        IF rising_edge(clk) THEN
+            IF en_secondPhaseReg = '1' THEN
+                secondPhaseReg <= '1';
+            ELSIF res_secondPhaseReg = '1' THEN
+                secondPhaseReg <= '0';
+            END IF;
+        END IF;
+    END IF;
+END PROCESS;
+
+--FINALDATAREG
+secondPhaseDone_reg: process (reset, clk)
+BEGIN
+    if reset='1' THEN
+        secondPhaseDoneReg <= '0';
+    ELSE
+        IF rising_edge(clk) THEN
+            IF en_secondPhaseDoneReg = '1' THEN
+                secondPhaseDoneReg <= '1';
+            ELSIF res_secondPhaseDoneReg = '1' THEN
+                secondPhaseDoneReg <= '0';
+            END IF;
+        END IF;
+    END IF;
+END PROCESS;
+
 -- Combinational Output Logic (all covered in next state logic above)
 combi_out: PROCESS(curState, rxNow, txDone, seqDone)
 BEGIN
@@ -225,11 +257,15 @@ BEGIN
     --
     en_bcdReg <= '0';
     en_finalDataReg <= '0';
+    en_secondPhaseReg <= '0';
+    res_secondPhaseReg <= '0';
+    en_secondPhaseDoneReg <= '0';
+    res_secondPhaseDoneReg <= '0';
     --
     CASE curState IS
         WHEN S0 =>  -- AWAIT FOR INPUT
             en_globalCount <= '0'; -- FIND BETTER PLACE?
-            secondPhaseDone <= '0';
+            --res_secondPhaseDoneReg <= '1';
             IF rxNow='1' THEN -- AND NOT(ovErr='1' OR framErr='1') THEN
                 --dataReg <= rxData;                      -- Load in data. Comes in ASCII, we output in ASCII.
                 rxDone <= '1';                          -- Can start receiving next bit.
@@ -239,9 +275,9 @@ BEGIN
                     
         WHEN S2 =>
             IF rxData = x"41" OR rxData = x"61" THEN  -- VALID A --
-                secondPhase <= '1';                        -- Recived A/a. Number register now valid
+                en_secondPhaseReg <= '1';                        -- Recived A/a. Number register now valid
                 res_globalCount <= '1';                     -- Resets counter
-            ELSIF rxData >= x"30" AND rxData <= x"39" and secondPhase = '1' THEN -- 0-9 and A/a previously recived --
+            ELSIF rxData >= x"30" AND rxData <= x"39" and secondPhaseReg = '1' THEN -- 0-9 and A/a previously recived --
                 en_globalCount <= '1';
                 IF globalCount = 0 THEN
                     numWords_bcd(2) <= rxData(3 downto 0);
@@ -252,24 +288,24 @@ BEGIN
                     --numWords_bcd <= bcdReg; -- initiates seqDone signal from Data Processor
                     res_globalCount <= '1';             -- Reset counter, no longer needed
                     res_threeCount <= '1';
-                    secondPhase <= '0';                -- Need another a/A to continue
+                    res_secondPhaseReg <= '1';                -- Need another a/A to continue
                     start <= '1';                       -- Starts data processor
                 ELSE
                     res_globalCount <= '0';
                 END IF;
-            ELSIF (rxData = x"50" OR rxData = x"70" OR rxData = x"4C" or rxData = x"6C") AND (secondPhase = '1') THEN
+            ELSIF (rxData = x"50" OR rxData = x"70" OR rxData = x"4C" or rxData = x"6C") AND (secondPhaseReg = '1') THEN
                 -- P/p/L/l and Full Command previously recieved -- 
                 res_globalCount <= '1';
                 res_threeCount <= '1';
             ELSE
                 -- assume interrupts semi-valid sequence. Must reset everything --
                 res_globalCount <= '1';
-                secondPhase <= '0';
+                res_secondPhaseReg <= '1';
             END IF;
             
         WHEN S3 =>
             IF seqDone = '1' THEN
-                secondPhase <= '1'; -- tells us it's the last run
+                en_secondPhaseReg <= '1'; -- tells us it's the last run
                 en_finalDataReg <= '1';
                 en_bcdReg <= '1';
                 --finalDataReg <= dataResults;    -- Load registers
@@ -289,7 +325,7 @@ BEGIN
             
         WHEN S5 =>  -- AWAIT FOR TRANSMISSION --
             IF txDone = '1' THEN --XNOR seqDone ='0' THEN --XNOR allows to skip this when seqDone='1'
-                IF secondPhase = '1' and threeCount = 2 THEN
+                IF secondPhaseReg = '1' and threeCount = 2 THEN
                     -- Skip everything, we've just outputted last space.
                     res_threeCount <= '1';
                 ELSE
@@ -319,7 +355,7 @@ BEGIN
                         txData <= "0011" & bcdReg(1);				
                     ELSIF threeCount = 2 THEN
                         txData <= "0011" & bcdReg(0);
-                        secondPhaseDone <= '1';
+                        en_secondPhaseDoneReg <= '1';
                         --res_threeCount <= '1';
                     END IF;
                 END IF;
@@ -338,15 +374,16 @@ BEGIN
                 txNow <= '1';
                 --en_threeCount <= '1';
                 IF globalCount = 6 THEN
-                    secondPhaseDone <= '1';
+                    en_secondPhaseDoneReg <= '1';
                 END IF;
             END IF;
             
         WHEN S7 =>
             IF txDone = '1' THEN
                 en_threeCount <= '1';
-                IF secondPhaseDone = '1' AND threeCount = 2 THEN
+                IF secondPhaseDoneReg = '1' AND threeCount = 2 THEN
                     res_globalCount <= '1';
+                    res_secondPhaseDoneReg <= '1';
                 END IF;
             END IF;
             
