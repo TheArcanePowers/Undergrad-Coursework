@@ -120,8 +120,8 @@ void task2_dtmfGenerate(char* keys)
             float low_freq = sin(2*PI*freq1*((float) i/fs));
             float high_freq = sin(2*PI *freq2*((float) i/fs));
 
-            /* without the 0.5x multiplier, sound corrupts... maybe it's peaking?*/
-            output = (short) 0.5*32768*(low_freq + high_freq);
+            /* without the sets the magnitude to remain within a (short), since that is the headersize we're using*/
+            output = (short) (32767/2)*(low_freq + high_freq);
 
 		/*Put it in buffer*/
             buffer[(samples_per_tone*n) + i] = output;

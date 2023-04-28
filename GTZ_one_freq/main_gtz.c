@@ -82,48 +82,45 @@ void clk_SWI_Generate_DTMF(UArg arg0)
  */
 void clk_SWI_GTZ_0697Hz(UArg arg0)
 {
-   	static int N = 0;
-   	static int Goertzel_Value = 0;
+	/* */
+   	static int iteration_num = 0;
+   	static int Goertzel_Output = 0;
 
-   	static short delay;
-   	static short delay_1 = 0;
-   	static short delay_2 = 0;
+   	static short Q;
+   	static short Q1 = 0;
+   	static short Q2 = 0;
 
-   	int prod1, prod2, prod3, R_in;
+   	int maths1, maths2, maths3;
 
-   	short input;//, coef_1;
+   	short input;
    	short coef_1 = 0x6D02; //hex for 697
 
-   	R_in = sample;
-
-   	input = (short) R_in;
-   	input = input >> 12;
+   	input = (short) sample >> 12;
 
    	// first part
-    prod1 = (delay_1*coef_1)>>14;
-   	delay = input + (short)prod1 - delay_2;
+    maths1 = (Q1*coef_1)>>14;
+   	Q = input + (short)maths1 - Q2;
    	//
 
-   	if (N==206)
+   	if (iteration_num==206)
    	{
-   		prod1 = (delay * delay);
-   		prod2 = (delay_1 * delay_1);
-   		prod3 = (delay * delay_1 * coef_1) >> 14;
+   		maths1 = (Q * Q);
+   		maths2 = (Q1 * Q1);
+   		maths3 = (Q * Q1 * coef_1) >> 14;
 
-   		Goertzel_Value = (prod1 + prod2 - prod3);// >> 15;
-   		Goertzel_Value <<= 1;  // scale up for sensitivity
-   		N = 0;
-   		delay = delay_1 = delay_2 = 0;
+   		Goertzel_Output = (maths1 + maths2 - maths3);// >> 15;
+   		Goertzel_Output <<= 1;  // scale up for sensitivity
+   		iteration_num = 0;
+   		Q = Q1 = Q2 = 0;
    	}
 
    	//update delayed variables
-   	delay_2 = delay_1;
-   	delay_1 = delay;
-   	N++;
+   	Q2 = Q1;
+   	Q1 = Q;
+   	iteration_num++;
    	//
 
-   	//gtz_out[0] = (((short) R_in) * ((short)Goertzel_Value)) >> 15;
-    gtz_out[0] = Goertzel_Value;
+    gtz_out[0] = Goertzel_Output;
 
 
 }

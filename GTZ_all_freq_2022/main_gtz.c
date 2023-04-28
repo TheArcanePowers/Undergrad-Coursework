@@ -98,16 +98,17 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
 	/* TODO 1. Complete the feedback loop of the GTZ algorithm*/
 	/* ========================= */
 	int n;
-	static int prod1[8], prod2[8], prod3[8] = {0};	// need to be int to hold large products
-	static short delay[8], delay_1[8], delay_2[8] = {0};	// can be short due to small variable size to conserve memory
+	// Create array of previous values. Set to static so they are constant throughout iterations. Initialized to zero.
+	static int maths1[8], maths2[8], maths3[8] = {0};			// need to be int to hold large products
+	static short Q[8], Q1[8], Q2[8] = {0};	// can be short to conserve memory due to small variable size
 
 	for (n = 0; n < 8; n++) {
-		prod1[n] = (delay_1[n]*coef[n])>>14;
-		delay[n] = input + (short)prod1[n] - delay_2[n];
+		maths1[n] = (Q1[n]*coef[n])>>14;
+		Q[n] = input + (short)maths1[n] - Q2[n];
 
 		//update delayed variables
-		delay_2[n] = delay_1[n];
-		delay_1[n] = delay[n];
+		Q2[n] = Q1[n];
+		Q1[n] = Q[n];
 	}
 	/* ========================= */
 	N++;
@@ -124,27 +125,25 @@ void clk_SWI_GTZ_All_Freq(UArg arg0) {
 		/* TODO 2. Complete the feedforward loop of the GTZ algorithm*/
 		/* ========================= */
 		for (n = 0; n < 8; n++) {
-			//int *testpointer;
-			//testpointer = &coef;
 
-			prod1[n] = (delay[n] * delay[n]);
-			prod2[n] = (delay_1[n] * delay_1[n]);
-			prod3[n] = (delay[n] * delay_1[n] * coef[n]) >> 14;
+			//Same as GTZ_one_freq, just all variables are now arrays for all 8 iterations
+			maths1[n] = (Q[n] * Q[n]);
+			maths2[n] = (Q1[n] * Q1[n]);
+			maths3[n] = (Q[n] * Q1[n] * coef[n]) >> 14;
 
-			Goertzel_Value[n] = (prod1[n] + prod2[n] - prod3[n]) >> 8;
-			//Goertzel_Value <<= 4;  // scale up for sensitivity. Check??
+			Goertzel_Value[n] = (maths1[n] + maths2[n] - maths3[n]) >> 8;
 
 			gtz_out[n] = Goertzel_Value[n];
 		}
 		//reset all!
 		int k;
 		for(k=0; k<8; k++) {
-			prod1[k] = 0;
-			prod2[k] = 0;
-			prod3[k] = 0;
-			delay[k] = 0;
-			delay_1[k] = 0;
-			delay_2[k] = 0;
+			maths1[k] = 0;
+			maths2[k] = 0;
+			maths3[k] = 0;
+			Q[k] = 0;
+			Q1[k] = 0;
+			Q2[k] = 0;
 		}
 
 		/* ========================= */
