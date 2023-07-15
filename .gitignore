@@ -23,15 +23,11 @@ parts/
 sdist/
 var/
 wheels/
-<<<<<<< HEAD
 pip-wheel-metadata/
 share/python-wheels/
-=======
->>>>>>> EMAT10007temp/main
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -102,7 +98,6 @@ __pypackages__/
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid
-=======
 # celery beat schedule file
 celerybeat-schedule
 
@@ -140,7 +135,7 @@ dmypy.json
 *.html
 *.pdf
 *.png
-=======
+
 # program specific (CUSTOM)
 EMAT10007/metrics.txt
 .vs/*
@@ -151,3 +146,65 @@ EMAT10007/bar_chart.pdf
 EMAT10007/test_encrypt.txt
 EMAT10007/test_decrypt.txt
 
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+GTZ_all_freq_2022/.xdchelp
+*.defs
+*.bld
+
+# Extras
+Debug/
+.launches/
+*.opt
+*.mk
+makefile
