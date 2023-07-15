@@ -1,0 +1,12 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../full_sim.srcs/sources_1/imports/leoma/OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/UART_RX_CTRL.vhd" \
+"../../../../full_sim.srcs/sources_1/imports/leoma/OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/UART_TX_CTRL.vhd" \
+"../../../../full_sim.srcs/sources_1/imports/leoma/OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/common_pack.vhd" \
+"../../../../full_sim.srcs/sources_1/imports/leoma/Documents/GitHub/Digital-Design/Command Processor/Command_Processor_test/Command_Processor_test.srcs/sources_1/new/cmdProc.vhd" \
+"../../../../full_sim.srcs/sources_1/imports/Data Processor/dataConsume.vhd" \
+"../../../../full_sim.srcs/sources_1/imports/peak_detector/dataGen.vhd" \
+"../../../../full_sim.srcs/sources_1/imports/leoma/OneDrive - University of Bristol/Modules/Digital Design/Assignment 2/Assingment_2_code/peak_detector/signed/tb_dataGenConsume_signed.vhd" \
+
+# Do not sort compile order
+nosort

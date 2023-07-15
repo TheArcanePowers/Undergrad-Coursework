@@ -1,0 +1,129 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Sun Apr 23 13:10:06 2023
+# Process ID: 41896
+# Current directory: C:/Users/lukeh/OneDrive - University of Bristol/University Of Bristol/DigitalDesignLab/Assignment2/PeakDetector2/dataProcessor
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent29736 C:\Users\lukeh\OneDrive - University of Bristol\University Of Bristol\DigitalDesignLab\Assignment2\PeakDetector2\dataProcessor\dataProcessor.xpr
+# Log file: C:/Users/lukeh/OneDrive - University of Bristol/University Of Bristol/DigitalDesignLab/Assignment2/PeakDetector2/dataProcessor/vivado.log
+# Journal file: C:/Users/lukeh/OneDrive - University of Bristol/University Of Bristol/DigitalDesignLab/Assignment2/PeakDetector2/dataProcessor\vivado.jou
+# Running On: LAPTOP-I8F9F75T, OS: Windows, CPU Frequency: 2419 MHz, CPU Physical cores: 4, Host memory: 8215 MB
+#-----------------------------------------------------------
+start_gui
+open_project {C:/Users/lukeh/OneDrive - University of Bristol/University Of Bristol/DigitalDesignLab/Assignment2/PeakDetector2/dataProcessor/dataProcessor.xpr}
+update_compile_order -fileset sources_1
+launch_simulation
+source tb_dataGenConsume.tcl
+current_wave_config {Untitled 1}
+add_wave {{/tb_dataGenConsume/dataConsume1/curState}} 
+current_wave_config {Untitled 1}
+add_wave {{/tb_dataGenConsume/dataConsume1/nextState}} 
+current_wave_config {Untitled 1}
+add_wave {{/tb_dataGenConsume/dataConsume1/prevctrlIn}} 
+relaunch_sim
+close_sim
+launch_simulation
+launch_simulation
+source tb_dataGenConsume.tcl
+current_wave_config {Untitled 2}
+add_wave {{/tb_dataGenConsume/dataConsume1/curState}} 
+current_wave_config {Untitled 2}
+add_wave {{/tb_dataGenConsume/dataConsume1/nextState}} 
+relaunch_sim
+close_sim
+launch_simulation
+source tb_dataGenConsume.tcl
+current_wave_config {Untitled 3}
+add_wave {{/tb_dataGenConsume/dataConsume1/curState}} 
+current_wave_config {Untitled 3}
+add_wave {{/tb_dataGenConsume/dataConsume1/nextState}} 
+relaunch_sim
+current_wave_config {Untitled 3}
+add_wave {{/tb_dataGenConsume/dataConsume1/ctrlIn}} 
+current_wave_config {Untitled 3}
+add_wave {{/tb_dataGenConsume/dataConsume1/prevctrlIn}} 
+relaunch_sim
+close_sim
+launch_simulation
+launch_simulation
+source tb_dataGenConsume.tcl
+current_wave_config {Untitled 4}
+add_wave {{/tb_dataGenConsume/dataConsume1/curState}} 
+current_wave_config {Untitled 4}
+add_wave {{/tb_dataGenConsume/dataConsume1/nextState}} 
+current_wave_config {Untitled 4}
+add_wave {{/tb_dataGenConsume/dataConsume1/prevctrlIn}} 
+current_wave_config {Untitled 4}
+add_wave {{/tb_dataGenConsume/dataConsume1/prevctrlIn}} 
+current_wave_config {Untitled 4}
+add_wave {{/tb_dataGenConsume/dataConsume1/ctrlIn}} 
+relaunch_sim
+close_sim
+launch_simulation
+source tb_dataGenConsume.tcl
+current_wave_config {Untitled 5}
+add_wave {{/tb_dataGenConsume/dataConsume1/xorIn}} 
+relaunch_sim
+current_wave_config {Untitled 5}
+add_wave {{/tb_dataGenConsume/dataConsume1/ctrlIn}} 
+current_wave_config {Untitled 5}
+add_wave {{/tb_dataGenConsume/dataConsume1/prevctrlIn}} 
+close_sim
+launch_simulation
+source tb_dataGenConsume.tcl
+current_wave_config {Untitled 6}
+add_wave {{/tb_dataGenConsume/dataConsume1/xorIn}} 
+current_wave_config {Untitled 6}
+add_wave {{/tb_dataGenConsume/dataConsume1/prevctrlIn}} 
+current_wave_config {Untitled 6}
+add_wave {{/tb_dataGenConsume/dataConsume1/curState}} 
+current_wave_config {Untitled 6}
+add_wave {{/tb_dataGenConsume/dataConsume1/nextState}} 
+current_wave_config {Untitled 6}
+add_wave {{/tb_dataGenConsume/dataConsume1/ctrlIn}} 
+current_wave_config {Untitled 6}
+add_wave {{/tb_dataGenConsume/dataConsume1/ctrlOut}} 
+relaunch_sim
+close_sim
+launch_simulation
+source tb_dataGenConsume.tcl
+current_wave_config {Untitled 7}
+add_wave {{/tb_dataGenConsume/dataConsume1/xorIn}} 
+current_wave_config {Untitled 7}
+add_wave {{/tb_dataGenConsume/dataConsume1/prevctrlIn}} 
+current_wave_config {Untitled 7}
+add_wave {{/tb_dataGenConsume/dataConsume1/ctrlIn}} 
+current_wave_config {Untitled 7}
+add_wave {{/tb_dataGenConsume/dataConsume1/curState}} 
+current_wave_config {Untitled 7}
+add_wave {{/tb_dataGenConsume/dataConsume1/nextState}} 
+relaunch_sim
+close_sim
+launch_simulation
+source tb_dataGenConsume.tcl
+current_wave_config {Untitled 8}
+add_wave {{/tb_dataGenConsume/dataConsume1}} 
+current_wave_config {Untitled 8}
+add_wave {{/tb_dataGenConsume/dataConsume1/ctrlIn}} 
+current_wave_config {Untitled 8}
+add_wave {{/tb_dataGenConsume/dataConsume1/prevctrlIn}} 
+current_wave_config {Untitled 8}
+add_wave {{/tb_dataGenConsume/dataConsume1/xorIn}} 
+current_wave_config {Untitled 8}
+add_wave {{/tb_dataGenConsume/dataConsume1/curState}} 
+current_wave_config {Untitled 8}
+add_wave {{/tb_dataGenConsume/dataConsume1/nextState}} 
+relaunch_sim
+close_sim
+launch_simulation
+source tb_dataGenConsume.tcl
+current_wave_config {Untitled 9}
+add_wave {{/tb_dataGenConsume/dataConsume1/prevctrlIn}} 
+current_wave_config {Untitled 9}
+add_wave {{/tb_dataGenConsume/dataConsume1/ctrlIn}} 
+current_wave_config {Untitled 9}
+add_wave {{/tb_dataGenConsume/dataConsume1/prevctrlIn}} 
+current_wave_config {Untitled 9}
+add_wave {{/tb_dataGenConsume/dataConsume1}} 
+relaunch_sim

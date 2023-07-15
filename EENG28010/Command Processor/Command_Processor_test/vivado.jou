@@ -1,0 +1,15 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Wed Apr 26 13:09:37 2023
+# Process ID: 13880
+# Current directory: C:/Users/lukeh/Documents/GitHub/Digital-Design/Command Processor/Command_Processor_test
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent13724 C:\Users\lukeh\Documents\GitHub\Digital-Design\Command Processor\Command_Processor_test\Command_Processor_test.xpr
+# Log file: C:/Users/lukeh/Documents/GitHub/Digital-Design/Command Processor/Command_Processor_test/vivado.log
+# Journal file: C:/Users/lukeh/Documents/GitHub/Digital-Design/Command Processor/Command_Processor_test\vivado.jou
+# Running On: LAPTOP-I8F9F75T, OS: Windows, CPU Frequency: 2419 MHz, CPU Physical cores: 4, Host memory: 8215 MB
+#-----------------------------------------------------------
+start_gui
+open_project {C:/Users/lukeh/Documents/GitHub/Digital-Design/Command Processor/Command_Processor_test/Command_Processor_test.xpr}
+update_compile_order -fileset sources_1
